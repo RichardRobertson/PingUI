@@ -1,0 +1,102 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vm="using:PingUI.ViewModels"
+	xmlns:ic="using:FluentIcons.FluentAvalonia"
+	xmlns:i18n="using:PingUI.I18N"
+	x:Class="PingUI.Views.TargetView"
+	x:DataType="vm:TargetViewModel">
+	<UserControl.Styles>
+		<Style Selector="Expander.Unknown /template/ DockPanel > ToggleButton">
+			<Setter Property="Background" Value="#333333" />
+		</Style>
+		<Style Selector="Expander.Success /template/ DockPanel > ToggleButton">
+			<Setter Property="Background" Value="#68885C" />
+		</Style>
+		<Style Selector="Expander.Failure /template/ DockPanel > ToggleButton">
+			<Setter Property="Background" Value="#9C2B2E" />
+		</Style>
+		<Style Selector="Button.Flat, ToggleButton.Flat">
+			<Setter Property="Background" Value="Transparent" />
+			<Setter Property="FontSize" Value="24" />
+			<Setter Property="Padding" Value="8" />
+			<Setter Property="Margin" Value="8" />
+		</Style>
+		<Style Selector="ToggleButton.PlayPause">
+			<Setter Property="(ToolTip.Tip)" Value="{x:Static i18n:Strings.TargetView_ToolTip_Play}" />
+		</Style>
+		<Style Selector="ToggleButton.PlayPause:checked">
+			<Setter Property="(ToolTip.Tip)"
+				Value="{x:Static i18n:Strings.TargetView_ToolTip_Pause}" />
+		</Style>
+		<Style Selector="ToggleButton.PlayPause > ic|SymbolIcon">
+			<Setter Property="Symbol" Value="Play" />
+		</Style>
+		<Style Selector="ToggleButton.PlayPause:checked > ic|SymbolIcon">
+			<Setter Property="Symbol" Value="Pause" />
+		</Style>
+		<Style Selector="Button.Flat:disabled">
+			<Setter Property="IsVisible" Value="False" />
+		</Style>
+	</UserControl.Styles>
+	<Expander CornerRadius="4" Margin="8" Padding="8"
+		HorizontalAlignment="Stretch"
+		Classes.Unknown="{Binding IsUnknown}"
+		Classes.Failure="{Binding IsFailure}"
+		Classes.Success="{Binding IsSuccess}">
+		<Expander.ContextMenu>
+			<ContextMenu>
+				<MenuItem Header="{x:Static i18n:Strings.TargetView_Menu_Edit}"
+					Command="{Binding EditSelfCommand}">
+					<MenuItem.Icon>
+						<ic:SymbolIcon Symbol="Edit" />
+					</MenuItem.Icon>
+				</MenuItem>
+				<Separator />
+				<MenuItem Header="{x:Static i18n:Strings.TargetView_Menu_Clear}"
+					Command="{Binding ClearHistoryCommand}" />
+				<MenuItem Header="{x:Static i18n:Strings.TargetView_Menu_Delete}"
+					Command="{Binding DeleteSelfCommand}">
+					<MenuItem.Icon>
+						<ic:SymbolIcon Symbol="Delete" />
+					</MenuItem.Icon>
+				</MenuItem>
+			</ContextMenu>
+		</Expander.ContextMenu>
+		<Expander.Header>
+			<DockPanel>
+				<ToggleButton Classes="Flat PlayPause"
+					IsChecked="{Binding IsEnabled}"
+					DockPanel.Dock="Right">
+					<ic:SymbolIcon />
+				</ToggleButton>
+				<StackPanel Margin="8" DockPanel.Dock="Right">
+					<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+						<TextBlock Text="{Binding Successes}"
+							ToolTip.Tip="{x:Static i18n:Strings.TargetView_ToolTip_Successes}" />
+						<TextBlock Text=" / "
+							ToolTip.Tip="{x:Static i18n:Strings.TargetView_ToolTip_SuccessesOutOfPings}" />
+						<TextBlock Text="{Binding PingCount}"
+							ToolTip.Tip="{x:Static i18n:Strings.TargetView_ToolTip_PingCount}" />
+					</StackPanel>
+					<TextBlock HorizontalAlignment="Center"
+						Text="{Binding PercentSuccess, StringFormat={}{0:P2}}"
+						ToolTip.Tip="{x:Static i18n:Strings.TargetView_ToolTip_PercentSuccess}" />
+				</StackPanel>
+				<Button Classes="Flat" Foreground="Red"
+					ToolTip.Tip="{x:Static i18n:Strings.TargetView_ToolTip_ClearAlert}"
+					DockPanel.Dock="Right" Command="{Binding ClearAlertCommand}">
+					<ic:SymbolIcon Symbol="AlertOn" />
+				</Button>
+				<StackPanel Margin="8">
+					<TextBlock Text="{Binding Address}"
+						ToolTip.Tip="{x:Static i18n:Strings.Shared_ToolTip_Address}" />
+					<TextBlock Text="{Binding Label}"
+						ToolTip.Tip="{x:Static i18n:Strings.Shared_ToolTip_Label}" />
+				</StackPanel>
+			</DockPanel>
+		</Expander.Header>
+		<ScrollViewer MaxHeight="100">
+			<ItemsControl ItemsSource="{Binding Transitions}" Grid.IsSharedSizeScope="True" />
+		</ScrollViewer>
+	</Expander>
+</UserControl>

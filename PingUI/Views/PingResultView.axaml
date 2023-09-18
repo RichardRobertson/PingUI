@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vm="using:PingUI.ViewModels"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Class="PingUI.Views.PingResultView"
+	x:DataType="vm:PingResultViewModel">
+	<UserControl.Styles>
+		<Style Selector="TextBlock.Success">
+			<Setter Property="Foreground" Value="Green" />
+		</Style>
+		<Style Selector="TextBlock.Failure">
+			<Setter Property="Foreground" Value="Red" />
+		</Style>
+		<Style Selector="TextBlock.Unknown">
+			<Setter Property="Foreground" Value="Gray" />
+		</Style>
+	</UserControl.Styles>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" SharedSizeGroup="A" />
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
+		<TextBlock Text="{Binding Timestamp, StringFormat={}{0:s}}" Margin="4" />
+		<TextBlock Text="{Binding Status}" Grid.Column="1" Margin="4"
+			Classes.Success="{Binding IsSuccess}"
+			Classes.Failure="{Binding IsFailure}" Classes.Unknown="{Binding IsUnknown}" />
+	</Grid>
+</UserControl>

@@ -1,0 +1,105 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vm="using:PingUI.ViewModels"
+	xmlns:i18n="using:PingUI.I18N"
+	x:Class="PingUI.Views.EditTargetView"
+	x:DataType="vm:EditTargetViewModel">
+	<StackPanel>
+		<StackPanel.Styles>
+			<Style Selector="TextBlock.IsNotNew">
+				<Setter Property="Text" Value="{x:Static i18n:Strings.EditTargetView_Header}" />
+			</Style>
+			<Style Selector="TextBlock.IsNew">
+				<Setter Property="Text" Value="{x:Static i18n:Strings.EditTargetView_Header_New}" />
+			</Style>
+		</StackPanel.Styles>
+		<TextBlock Margin="8" FontSize="24" HorizontalAlignment="Center"
+			Classes.IsNew="{Binding IsNewTarget}" Classes.IsNotNew="{Binding !IsNewTarget}" />
+		<Grid ColumnDefinitions="Auto *" RowDefinitions="Auto Auto Auto" Margin="8"
+			HorizontalAlignment="Center">
+			<Grid.Styles>
+				<Style Selector="Label">
+					<Setter Property="HorizontalAlignment" Value="Right" />
+					<Setter Property="VerticalAlignment" Value="Center" />
+				</Style>
+				<Style Selector="TextBox">
+					<Setter Property="MinWidth" Value="100" />
+					<Setter Property="(Grid.Column)" Value="1" />
+				</Style>
+			</Grid.Styles>
+			<Label Content="{x:Static i18n:Strings.Shared_Label_Address}"
+				ToolTip.Tip="{x:Static i18n:Strings.Shared_ToolTip_Address}"
+				Target="AddressText" />
+			<TextBox x:Name="AddressText" Text="{Binding Address}" />
+			<Label Content="{x:Static i18n:Strings.Shared_Label_Label}" Grid.Row="1"
+				ToolTip.Tip="{x:Static i18n:Strings.Shared_ToolTip_Label}"
+				Target="LabelText" />
+			<TextBox x:Name="LabelText" Text="{Binding Label}" Grid.Row="1" />
+			<Label Content="{x:Static i18n:Strings.Shared_Label_CoolDown}" Grid.Row="2"
+				ToolTip.Tip="{x:Static i18n:Strings.Shared_ToolTip_CoolDown}" />
+			<Grid Grid.Row="2" Grid.Column="1" ColumnDefinitions="Auto Auto Auto Auto"
+				RowDefinitions="Auto Auto Auto">
+				<Grid.Styles>
+					<Style Selector="Label">
+						<Setter Property="HorizontalAlignment" Value="Center" />
+					</Style>
+					<Style Selector="NumericUpDown">
+						<Setter Property="(Grid.Row)" Value="1" />
+						<Setter Property="ShowButtonSpinner" Value="False" />
+						<Setter Property="Increment" Value="1" />
+						<Setter Property="Value" Value="0" />
+					</Style>
+					<Style Selector="NumericUpDown.ErrorColor">
+						<Setter Property="Foreground"
+							Value="{DynamicResource SystemControlErrorTextForegroundBrush}" />
+						<Setter Property="BorderBrush"
+							Value="{DynamicResource SystemControlErrorTextForegroundBrush}" />
+					</Style>
+					<Style Selector="NumericUpDown.Left">
+						<Setter Property="CornerRadius" Value="3 0 0 3" />
+					</Style>
+					<Style Selector="NumericUpDown.Middle">
+						<Setter Property="CornerRadius" Value="0" />
+					</Style>
+					<Style Selector="NumericUpDown.Right">
+						<Setter Property="CornerRadius" Value="0 3 3 0" />
+					</Style>
+				</Grid.Styles>
+				<Label Content="{x:Static i18n:Strings.EditTargetView_Hours}" Target="HoursNumber" />
+				<NumericUpDown x:Name="HoursNumber" Value="{Binding Hours}" Minimum="0" Maximum="23"
+					Classes="Left" Classes.ErrorColor="{Binding IsZeroCoolDown}" />
+				<Label Content="{x:Static i18n:Strings.EditTargetView_Minutes}"
+					Target="MinutesNumber"
+					Grid.Column="1" />
+				<NumericUpDown x:Name="MinutesNumber" Value="{Binding Minutes}" Minimum="0"
+					Maximum="59" Grid.Column="1" Classes="Middle"
+					Classes.ErrorColor="{Binding IsZeroCoolDown}" />
+				<Label Content="{x:Static i18n:Strings.EditTargetView_Seconds}"
+					Target="SecondsNumber"
+					Grid.Column="2" />
+				<NumericUpDown x:Name="SecondsNumber" Value="{Binding Seconds}" Minimum="0"
+					Maximum="59" Grid.Column="2" Classes="Right"
+					Classes.ErrorColor="{Binding IsZeroCoolDown}" />
+				<DataValidationErrors
+					Content="{x:Static i18n:Strings.EditTargetView_ZeroCoolDownError}"
+					IsVisible="{Binding IsZeroCoolDown}"
+					Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}"
+					Grid.Row="2" Grid.ColumnSpan="4" />
+			</Grid>
+		</Grid>
+		<StackPanel Orientation="Horizontal" Margin="8" HorizontalAlignment="Right">
+			<StackPanel.Styles>
+				<Style Selector="Button.Apply">
+					<Setter Property="Content" Value="{x:Static i18n:Strings.Dialog_Apply}" />
+				</Style>
+				<Style Selector="Button.Create">
+					<Setter Property="Content" Value="{x:Static i18n:Strings.Dialog_Create}" />
+				</Style>
+			</StackPanel.Styles>
+			<Button Content="{x:Static i18n:Strings.Dialog_Cancel}"
+				Command="{Binding CancelDialogCommand}" Margin="4" />
+			<Button Command="{Binding AcceptDialogCommand}" Margin="4" Background="DarkGreen"
+				Classes.Apply="{Binding !IsNewTarget}" Classes.Create="{Binding IsNewTarget}" />
+		</StackPanel>
+	</StackPanel>
+</UserControl>

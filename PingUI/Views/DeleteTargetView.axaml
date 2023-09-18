@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vm="using:PingUI.ViewModels"
+	xmlns:i18n="using:PingUI.I18N"
+	x:Class="PingUI.Views.DeleteTargetView"
+	x:DataType="vm:DeleteTargetViewModel">
+	<StackPanel>
+		<TextBlock Text="{x:Static i18n:Strings.DeleteTargetView_Header}" Margin="8" FontSize="24"
+			HorizontalAlignment="Center" />
+		<Grid ColumnDefinitions="* *" RowDefinitions="* * *" Margin="8"
+			HorizontalAlignment="Center">
+			<TextBlock Text="{x:Static i18n:Strings.Shared_Label_Address}"
+				ToolTip.Tip="{x:Static i18n:Strings.Shared_ToolTip_Address}"
+				HorizontalAlignment="Right" />
+			<TextBlock Text="{Binding Target.Address}" Grid.Column="1" />
+			<TextBlock Text="{x:Static i18n:Strings.Shared_Label_Label}"
+				ToolTip.Tip="{x:Static i18n:Strings.Shared_ToolTip_Label}"
+				HorizontalAlignment="Right" Grid.Row="1" />
+			<TextBlock Text="{Binding Target.Label}" Grid.Row="1" Grid.Column="2" />
+			<TextBlock Text="{x:Static i18n:Strings.Shared_Label_CoolDown}"
+				ToolTip.Tip="{x:Static i18n:Strings.Shared_ToolTip_CoolDown}"
+				HorizontalAlignment="Right" Grid.Row="2" />
+			<TextBlock Text="{Binding CoolDown}" Grid.Row="2" Grid.Column="1" />
+		</Grid>
+		<StackPanel Orientation="Horizontal" Margin="8" HorizontalAlignment="Right">
+			<Button Content="{x:Static i18n:Strings.Dialog_Cancel}"
+				Command="{Binding CancelDialogCommand}" Margin="4" />
+			<Button Content="{x:Static i18n:Strings.Dialog_Delete}"
+				Command="{Binding AcceptDialogCommand}" Margin="4"
+				Background="DarkRed" />
+		</StackPanel>
+	</StackPanel>
+</UserControl>

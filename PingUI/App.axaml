@@ -1,0 +1,14 @@
+<Application xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	x:Class="PingUI.App"
+	xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
+	xmlns:local="using:PingUI"
+	RequestedThemeVariant="Dark">
+	<Application.DataTemplates>
+		<local:ViewLocator />
+	</Application.DataTemplates>
+	<Application.Styles>
+		<FluentTheme />
+		<dialogHostAvalonia:DialogHostStyles />
+	</Application.Styles>
+</Application>

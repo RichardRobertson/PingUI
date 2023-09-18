@@ -1,0 +1,81 @@
+<Window xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vm="using:PingUI.ViewModels"
+	xmlns:v="using:PingUI.Views"
+	xmlns:i18n="using:PingUI.I18N"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:ic="using:FluentIcons.FluentAvalonia"
+	xmlns:dialogHost="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
+	x:Class="PingUI.Views.MainWindow"
+	x:DataType="vm:MainWindowViewModel"
+	Icon="/Assets/avalonia-logo.ico" Title="{x:Static i18n:Strings.MainWindow_Title}"
+	Width="450" Height="600" Topmost="{Binding Topmost}"
+	TransparencyLevelHint="AcrylicBlur" Background="Transparent"
+	ExtendClientAreaToDecorationsHint="True"
+	ExtendClientAreaChromeHints="NoChrome">
+	<Window.Styles>
+		<Style Selector="Button.fab">
+			<Setter Property="HorizontalAlignment" Value="Right" />
+			<Setter Property="VerticalAlignment" Value="Bottom" />
+			<Setter Property="Margin" Value="16" />
+			<Setter Property="Padding" Value="16" />
+			<Setter Property="Height" Value="56" />
+			<Setter Property="Width" Value="56" />
+			<Setter Property="FontSize" Value="24" />
+			<Setter Property="Background" Value="{DynamicResource SystemAccentColor}" />
+		</Style>
+		<Style Selector="Button.fab /template/ ContentPresenter">
+			<Setter Property="CornerRadius" Value="16" />
+		</Style>
+		<Style Selector="Button.Chrome, ToggleButton.Chrome">
+			<Setter Property="Background" Value="Transparent" />
+			<Setter Property="FontSize" Value="16" />
+			<Setter Property="Width" Value="31" />
+			<Setter Property="Height" Value="29" />
+			<Setter Property="HorizontalContentAlignment" Value="Center" />
+			<Setter Property="VerticalContentAlignment" Value="Center" />
+		</Style>
+		<Style Selector="Button.Exit:pointerover /template/ ContentPresenter">
+			<Setter Property="Background" Value="#E81123" />
+		</Style>
+		<Style Selector="ToggleButton.Pin">
+			<Setter Property="(ToolTip.Tip)" Value="{x:Static i18n:Strings.MainWindow_ToolTip_Pin}" />
+		</Style>
+		<Style Selector="ToggleButton.Pin:checked">
+			<Setter Property="(ToolTip.Tip)"
+				Value="{x:Static i18n:Strings.MainWindow_ToolTip_Unpin}" />
+		</Style>
+	</Window.Styles>
+	<dialogHost:DialogHost CloseOnClickAway="True">
+		<Panel>
+			<ExperimentalAcrylicBorder IsHitTestVisible="False">
+				<ExperimentalAcrylicBorder.Material>
+					<ExperimentalAcrylicMaterial
+						BackgroundSource="Digger"
+						TintColor="Black"
+						TintOpacity="1"
+						FallbackColor="#333333"
+						MaterialOpacity="0.65" />
+				</ExperimentalAcrylicBorder.Material>
+			</ExperimentalAcrylicBorder>
+			<StackPanel>
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+					<ToggleButton Classes="Chrome Pin"
+						IsChecked="{Binding Topmost}">
+						<ic:SymbolIcon Symbol="Pin" />
+					</ToggleButton>
+					<Button Click="CloseWindowButton_Click" Classes="Chrome Exit">
+						<Path Stroke="White" StrokeThickness="1" Data="M 0 0 L 10 10 M 0 10 L 10 0" />
+					</Button>
+				</StackPanel>
+				<ScrollViewer>
+					<ItemsControl ItemsSource="{Binding Targets}" />
+				</ScrollViewer>
+			</StackPanel>
+			<Button Classes="fab" ToolTip.Tip="{x:Static i18n:Strings.MainWindow_ToolTip_Add}"
+				Command="{Binding AddTargetCommand}">
+				<ic:SymbolIcon Symbol="Add" />
+			</Button>
+		</Panel>
+	</dialogHost:DialogHost>
+</Window>

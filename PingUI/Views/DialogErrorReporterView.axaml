@@ -1,0 +1,25 @@
+<Window xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vm="using:PingUI.ViewModels"
+	xmlns:i18n="using:PingUI.I18N"
+	xmlns:ic="using:FluentIcons.FluentAvalonia"
+	x:Class="PingUI.Views.DialogErrorReporterView"
+	x:DataType="vm:DialogErrorReporterViewModel"
+	Icon="/Assets/avalonia-logo.ico" Title="{x:Static i18n:Strings.DialogErrorReporterView_Title}"
+	SizeToContent="WidthAndHeight" CanResize="False">
+	<DockPanel>
+		<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="8"
+			DockPanel.Dock="Bottom">
+			<Button Content="{x:Static i18n:Strings.DialogErrorReporterView_Copy}" Margin="8"
+				Click="CopyButton_Click" />
+			<Button Content="{x:Static i18n:Strings.Dialog_Dismiss}" Margin="8"
+				Click="DismissButton_Click" />
+		</StackPanel>
+		<ic:SymbolIcon Symbol="Warning" FontSize="64" Margin="8"
+			Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}"
+			DockPanel.Dock="Left" />
+		<TextBlock Text="{Binding Context}" Margin="8" DockPanel.Dock="Top"
+			Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}" />
+		<TextBlock Text="{Binding Exception}" Margin="8" />
+	</DockPanel>
+</Window>

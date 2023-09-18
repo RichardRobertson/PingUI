@@ -1,0 +1,64 @@
+{
+	"Strings": {
+		// DeleteTargetView
+		"DeleteTargetView_Header": "Confirm Delete?",
+		// EditTargetView
+		"EditTargetView_Header": "Edit Target",
+		"EditTargetView_Header_New": "Add Target",
+		"EditTargetView_Hours": "Hours",
+		"EditTargetView_Minutes": "Minutes",
+		"EditTargetView_Seconds": "Seconds",
+		"EditTargetView_ZeroCoolDownError": "Enter non-zero cool down",
+		"EditTargetView_IPAddressBlank": "Enter IP address",
+		"EditTargetView_IPAddressParseError": "Invalid IP address",
+		// Shared DeleteTargetView and EditTargetView field labels
+		"Shared_Label_Address": "Address: ",
+		"Shared_Label_Label": "Label: ",
+		"Shared_Label_CoolDown": "Cool down: ",
+		"Shared_ToolTip_Address": "The IP address to ping",
+		"Shared_ToolTip_Label": "The optional name to display on this target",
+		"Shared_ToolTip_CoolDown": "The amount of time to wait between pings",
+		// Shared dialog buttons
+		"Dialog_Apply": "Apply",
+		"Dialog_Cancel": "Cancel",
+		"Dialog_Create": "Create",
+		"Dialog_Delete": "Delete",
+		"Dialog_Dismiss": "Dismiss",
+		// TargetView
+		"TargetView_Menu_Edit": "Edit",
+		"TargetView_Menu_Clear": "Clear History",
+		"TargetView_Menu_Delete": "Delete",
+		"TargetView_ToolTip_Play": "Start pinging",
+		"TargetView_ToolTip_Pause": "Stop pinging",
+		"TargetView_ToolTip_ClearAlert": "Clear alert",
+		"TargetView_ToolTip_Successes": "Number of successful pings",
+		"TargetView_ToolTip_PingCount": "Number of total pings",
+		"TargetView_ToolTip_SuccessesOutOfPings": "Number of successful pings / number of total pings",
+		"TargetView_ToolTip_PercentSuccess": "Percentage of pings that were successful",
+		// TimeSpanExtensions
+		"TimeSpanExtensions_Separator": ", ",
+		"TimeSpanExtensions_Hour": "hour",
+		"TimeSpanExtensions_Hours": "hours",
+		"TimeSpanExtensions_Minute": "minute",
+		"TimeSpanExtensions_Minutes": "minutes",
+		"TimeSpanExtensions_Second": "second",
+		"TimeSpanExtensions_Seconds": "seconds",
+		// ReadonlyDependencyResolverExtensions
+		"ReadonlyDependencyResolverExtensions_MissingRequiredServiceFormat": "{0} service is not registered.",
+		// MainWindow
+		"MainWindow_ToolTip_Pin": "Pin window on top",
+		"MainWindow_ToolTip_Unpin": "Unpin window from top",
+		"MainWindow_ToolTip_Add": "Add new target",
+		"MainWindow_Title": "PingUI",
+		// DialogErrorReporterView
+		"DialogErrorReporterView_Title": "Error Report",
+		"DialogErrorReporterView_Copy": "Copy to clipboard",
+		"DialogErrorReporterView_Copy_Fail": "Failed to copy to clipboard",
+		// LocalOrAppDataJsonConfiguration
+		"LocalOrAppDataJsonConfiguration_Error_LoadFile": "Error occurred while reading JSON config file at `{0}`.",
+		// TargetViewModel
+		"TargetViewModel_Error_Ping": "Error occurred while pinging `{0}`",
+		// Program
+		"Program_Error_Global": "Error occurred at program level."
+	}
+}
