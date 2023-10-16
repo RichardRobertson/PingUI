@@ -63,6 +63,21 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 	private bool _IsAlert;
 
 	/// <summary>
+	/// Backing store for <see cref="IsUnknown" />.
+	/// </summary>
+	private bool _IsUnknown;
+
+	/// <summary>
+	/// Backing store for <see cref="IsSuccess" />.
+	/// </summary>
+	private bool _IsSuccess;
+
+	/// <summary>
+	/// Backing store for <see cref="IsFailure" />.
+	/// </summary>
+	private bool _IsFailure;
+
+	/// <summary>
 	/// Initializes a new <see cref="TargetViewModel" />.
 	/// </summary>
 	/// <param name="target">The target to display.</param>
@@ -85,6 +100,28 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 		{
 			_Pinger.DisposeWith(disposables);
 			_History.ToObservableChangeSet()
+				.OnItemAdded(change =>
+				{
+					switch (change.Status)
+					{
+						case IPStatus.Unknown:
+							IsUnknown = true;
+							IsSuccess = false;
+							IsFailure = false;
+							break;
+						case IPStatus.Success:
+							IsUnknown = false;
+							IsSuccess = true;
+							IsFailure = false;
+							break;
+						default:
+							IsUnknown = false;
+							IsSuccess = false;
+							IsFailure = true;
+							IsAlert = true;
+							break;
+					}
+				})
 				.Cast(result => new PingResultViewModel(result))
 				.Bind(out var transitions)
 				.Subscribe()
@@ -130,9 +167,6 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 		{
 			_History.Clear();
 			_History.Add(new PingResult(IPStatus.Unknown, DateTime.Now));
-			this.RaisePropertyChanged(nameof(IsSuccess));
-			this.RaisePropertyChanged(nameof(IsFailure));
-			this.RaisePropertyChanged(nameof(IsUnknown));
 			Successes = 0;
 			PingCount = 0;
 		});
@@ -170,9 +204,6 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 				this.RaisePropertyChanging();
 				_Pinger.Disposable = null;
 				_History.Insert(0, new PingResult(IPStatus.Unknown, DateTime.Now));
-				this.RaisePropertyChanged(nameof(IsSuccess));
-				this.RaisePropertyChanged(nameof(IsFailure));
-				this.RaisePropertyChanged(nameof(IsUnknown));
 				this.RaisePropertyChanged();
 			}
 			else if (_Pinger.Disposable is null && value)
@@ -187,9 +218,6 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 							if (_History[0].Status != item.Status)
 							{
 								_History.Insert(0, item);
-								this.RaisePropertyChanged(nameof(IsSuccess));
-								this.RaisePropertyChanged(nameof(IsFailure));
-								this.RaisePropertyChanged(nameof(IsUnknown));
 							}
 							if (item.Status == IPStatus.Success)
 							{
@@ -199,10 +227,6 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 							{
 								PingCount++;
 								PercentSuccess = (double)_Successes / _PingCount;
-							}
-							if (item.Status != IPStatus.Success && item.Status != IPStatus.Unknown)
-							{
-								IsAlert = true;
 							}
 						},
 						exception =>
@@ -245,27 +269,32 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 	/// <summary>
 	/// Gets a value indicating if the pinger is currently in a success state.
 	/// </summary>
-	/// <value><see langword="true" /> if <see cref="IsEnabled" /> is <see langword="true" /> and the top <see cref="Transitions" /> status is <see cref="IPStatus.Success" />; otherwise <see langword="false" />.</value>
-	public bool IsSuccess => IsEnabled && _History[0].Status == IPStatus.Success;
+	/// <value><see langword="true" /> if the top <see cref="Transitions" /> status is <see cref="IPStatus.Success" />; otherwise <see langword="false" />.</value>
+	public bool IsSuccess
+	{
+		get => _IsSuccess;
+		private set => this.RaiseAndSetIfChanged(ref _IsSuccess, value);
+	}
 
 	/// <summary>
 	/// Gets a value indicating if the pinger is currently in a failure state.
 	/// </summary>
-	/// <value><see langword="true" /> if <see cref="IsEnabled" /> is <see langword="true" /> and the top <see cref="Transitions" /> status is not <see cref="IPStatus.Success" /> or <see cref="IPStatus.Unknown" />; otherwise <see langword="false" />.</value>
+	/// <value><see langword="true" /> if the top <see cref="Transitions" /> status is not <see cref="IPStatus.Success" /> or <see cref="IPStatus.Unknown" />; otherwise <see langword="false" />.</value>
 	public bool IsFailure
 	{
-		get
-		{
-			var latestStatus = _History[0].Status;
-			return IsEnabled && latestStatus != IPStatus.Unknown && latestStatus != IPStatus.Success;
-		}
+		get => _IsFailure;
+		private set => this.RaiseAndSetIfChanged(ref _IsFailure, value);
 	}
 
 	/// <summary>
 	/// Gets a value indicating if the pinger is currently in an unknown state.
 	/// </summary>
-	/// <value><see langword="true" /> if <see cref="IsEnabled" /> is <see langword="true" /> and the top <see cref="Transitions" /> status is <see cref="IPStatus.Unknown" />; otherwise <see langword="false" />.</value>
-	public bool IsUnknown => _History[0].Status == IPStatus.Unknown;
+	/// <value><see langword="true" /> if the top <see cref="Transitions" /> status is <see cref="IPStatus.Unknown" />; otherwise <see langword="false" />.</value>
+	public bool IsUnknown
+	{
+		get => _IsUnknown;
+		private set => this.RaiseAndSetIfChanged(ref _IsUnknown, value);
+	}
 
 	/// <summary>
 	/// Gets the number of pings that resulted in <see cref="IPStatus.Success" />.
