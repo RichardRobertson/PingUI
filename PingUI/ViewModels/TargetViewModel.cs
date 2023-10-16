@@ -212,6 +212,7 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 				_Pinger.Disposable = Locator.Current
 					.GetRequiredService<IPinger>()
 					.GetObservable(Target)
+					.ObserveOn(RxApp.MainThreadScheduler)
 					.Subscribe(Observer.Create<PingResult>(
 						item =>
 						{

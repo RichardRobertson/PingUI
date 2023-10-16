@@ -56,8 +56,8 @@ public class FakeTogglePinger(int repeats = 1) : IPinger
 			var status = IPStatus.Success;
 			while (!cancellationToken.IsCancellationRequested)
 			{
-				RxApp.MainThreadScheduler.Schedule(() => observer.OnNext(new PingResult(status, DateTime.Now)));
-				await Task.Delay(target.CoolDown, cancellationToken).ConfigureAwait(true);
+				observer.OnNext(new PingResult(status, DateTime.Now));
+				await Task.Delay(target.CoolDown, cancellationToken).ConfigureAwait(false);
 				_Count++;
 				if (_Count == Repeats)
 				{
@@ -65,15 +65,14 @@ public class FakeTogglePinger(int repeats = 1) : IPinger
 					_Count = 0;
 				}
 			}
-			RxApp.MainThreadScheduler.Schedule(observer.OnCompleted);
 		}
 		catch (TaskCanceledException)
 		{
-			RxApp.MainThreadScheduler.Schedule(observer.OnCompleted);
+			observer.OnCompleted();
 		}
 		catch (Exception error)
 		{
-			RxApp.MainThreadScheduler.Schedule(() => observer.OnError(error));
+			observer.OnError(error);
 		}
 	}
 }

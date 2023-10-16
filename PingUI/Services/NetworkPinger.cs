@@ -46,19 +46,18 @@ public class NetworkPinger : IPinger
 			var ping = new Ping();
 			while (!cancellationToken.IsCancellationRequested)
 			{
-				var result = await ping.SendPingAsync(target.Address, FiveSeconds, null, null, cancellationToken).ConfigureAwait(true);
-				RxApp.MainThreadScheduler.Schedule(() => observer.OnNext(new PingResult(result.Status, DateTime.Now)));
-				await Task.Delay(target.CoolDown, cancellationToken).ConfigureAwait(true);
+				var result = await ping.SendPingAsync(target.Address, FiveSeconds, null, null, cancellationToken).ConfigureAwait(false);
+				observer.OnNext(new PingResult(result.Status, DateTime.Now));
+				await Task.Delay(target.CoolDown, cancellationToken).ConfigureAwait(false);
 			}
-			RxApp.MainThreadScheduler.Schedule(observer.OnCompleted);
 		}
 		catch (TaskCanceledException)
 		{
-			RxApp.MainThreadScheduler.Schedule(observer.OnCompleted);
+			observer.OnCompleted();
 		}
 		catch (Exception error)
 		{
-			RxApp.MainThreadScheduler.Schedule(() => observer.OnError(error));
+			observer.OnError(error);
 		}
 	}
 }
