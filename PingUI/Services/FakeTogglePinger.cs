@@ -14,8 +14,22 @@ namespace PingUI.Services;
 /// <summary>
 /// An <see cref="IPinger" /> for testing UI changes that produces alternating results of <see cref="IPStatus.Success" /> and <see cref="IPStatus.TimedOut" />.
 /// </summary>
-public class FakeTogglePinger : IPinger
+/// <param name="repeats">How many times to repeat a state before toggling.</param>
+public class FakeTogglePinger(int repeats = 1) : IPinger
 {
+	/// <summary>
+	/// Counts how many times a status has been reported.
+	/// </summary>
+	private int _Count;
+
+	/// <summary>
+	/// Gets a value indicating how many times to repeat a state before toggling.
+	/// </summary>
+	public int Repeats
+	{
+		get;
+	} = repeats;
+
 	/// <inheritdoc />
 	public IObservable<PingResult> GetObservable(Target target)
 	{
@@ -35,7 +49,7 @@ public class FakeTogglePinger : IPinger
 	/// <param name="observer">The <see cref="IObserver{T}" /> of <see cref="PingResult" /> to notify.</param>
 	/// <param name="cancellationToken">A <see cref="CancellationToken" /> to stop the task with.</param>
 	/// <returns>A <see cref="Task" /> representing the asynchronous job.</returns>
-	private static async Task PingLoopAsync(Target target, IObserver<PingResult> observer, CancellationToken cancellationToken)
+	private async Task PingLoopAsync(Target target, IObserver<PingResult> observer, CancellationToken cancellationToken)
 	{
 		try
 		{
@@ -43,8 +57,13 @@ public class FakeTogglePinger : IPinger
 			while (!cancellationToken.IsCancellationRequested)
 			{
 				RxApp.MainThreadScheduler.Schedule(() => observer.OnNext(new PingResult(status, DateTime.Now)));
-				status = status == IPStatus.Success ? IPStatus.TimedOut : IPStatus.Success;
 				await Task.Delay(target.CoolDown, cancellationToken).ConfigureAwait(true);
+				_Count++;
+				if (_Count == Repeats)
+				{
+					status = status == IPStatus.Success ? IPStatus.TimedOut : IPStatus.Success;
+					_Count = 0;
+				}
 			}
 			RxApp.MainThreadScheduler.Schedule(observer.OnCompleted);
 		}
