@@ -8,6 +8,7 @@ using DialogHostAvalonia;
 using DynamicData;
 using DynamicData.Binding;
 using PingUI.Extensions;
+using PingUI.I18N;
 using PingUI.Models;
 using PingUI.ServiceModels;
 using ReactiveUI;
@@ -55,6 +56,11 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 				{
 					if (result is Target target)
 					{
+						if (configuration.Targets.Contains(target))
+						{
+							Locator.Current.GetRequiredService<IErrorReporter>().ReportError(string.Empty, new InvalidOperationException(string.Format(Strings.Shared_Error_DuplicateTarget, target)));
+							return;
+						}
 						configuration.Targets.Add(target);
 					}
 				})

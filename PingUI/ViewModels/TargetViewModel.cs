@@ -150,12 +150,20 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 			PromptForEditInteraction.Handle(Target)
 				.Do(result =>
 				{
-					if (result is Target target)
+					if (result is Target target && target != Target)
 					{
 						var configuration = Locator.Current.GetRequiredService<IConfiguration>();
-						lock (HistoryTransfer)
+						if (configuration.Targets.Contains(target))
 						{
-							HistoryTransfer[target] = _History;
+							Locator.Current.GetRequiredService<IErrorReporter>().ReportError(string.Empty, new InvalidOperationException(string.Format(Strings.Shared_Error_DuplicateTarget, target)));
+							return;
+						}
+						if (target.Address == Target.Address)
+						{
+							lock (HistoryTransfer)
+							{
+								HistoryTransfer[target] = _History;
+							}
 						}
 						configuration.Targets.Replace(Target, target);
 						_Pinger.Dispose();

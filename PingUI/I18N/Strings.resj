@@ -59,6 +59,8 @@
 		// TargetViewModel
 		"TargetViewModel_Error_Ping": "Error occurred while pinging `{0}`",
 		// Program
-		"Program_Error_Global": "Error occurred at program level."
+		"Program_Error_Global": "Error occurred at program level.",
+		// Shared error messages
+		"Shared_Error_DuplicateTarget": "Target already exists: {0}"
 	}
 }

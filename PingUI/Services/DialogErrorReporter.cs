@@ -1,7 +1,9 @@
 using System;
+using System.Reactive.Concurrency;
 using PingUI.ServiceModels;
 using PingUI.ViewModels;
 using PingUI.Views;
+using ReactiveUI;
 
 namespace PingUI.Services;
 
@@ -13,6 +15,6 @@ public class DialogErrorReporter : IErrorReporter
 	/// <inheritdoc />
 	public void ReportError(string context, Exception exception)
 	{
-		new DialogErrorReporterView() { ViewModel = new DialogErrorReporterViewModel(context, exception) }.Show();
+		RxApp.MainThreadScheduler.Schedule(() => new DialogErrorReporterView() { ViewModel = new DialogErrorReporterViewModel(context, exception) }.Show());
 	}
 }
