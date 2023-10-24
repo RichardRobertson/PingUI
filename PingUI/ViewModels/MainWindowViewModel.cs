@@ -7,6 +7,7 @@ using System.Reactive.Threading.Tasks;
 using DialogHostAvalonia;
 using DynamicData;
 using DynamicData.Binding;
+using PingUI.Collections;
 using PingUI.Extensions;
 using PingUI.I18N;
 using PingUI.Models;
@@ -29,7 +30,7 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 	/// <summary>
 	/// Backing store for <see cref="Targets" />.
 	/// </summary>
-	private ReadOnlyObservableCollection<TargetViewModel>? _Targets;
+	private ReadOnlyObservableMappedCollection<Target, ObservableCollection<Target>, TargetViewModel>? _Targets;
 
 	/// <summary>
 	/// Initializes a new <see cref="MainWindowViewModel" />.
@@ -39,13 +40,12 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 		configuration = Locator.Current.GetRequiredService<IConfiguration>();
 		this.WhenActivated(disposables =>
 		{
-			configuration.Targets
-				.ToObservableChangeSet()
-				.Cast(target => new TargetViewModel(target))
-				.Bind(out var targets)
-				.Subscribe()
-				.DisposeWith(disposables);
-			Targets = targets;
+			Targets = new ReadOnlyObservableMappedCollection<Target, ObservableCollection<Target>, TargetViewModel>(
+				configuration.Targets,
+				t => new TargetViewModel(t),
+				(t, tvm) => tvm.Target = t,
+				tvm => tvm.Target);
+			Targets.DisposeWith(disposables);
 			Disposable.Create(() => Targets = null).DisposeWith(disposables);
 		});
 		AddTargetCommand = ReactiveCommand.Create(() =>
@@ -71,7 +71,7 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 	/// <summary>
 	/// Gets the list of <see cref="Target" /> view models.
 	/// </summary>
-	public ReadOnlyObservableCollection<TargetViewModel>? Targets
+	public ReadOnlyObservableMappedCollection<Target, ObservableCollection<Target>, TargetViewModel>? Targets
 	{
 		get => _Targets;
 		private set => this.RaiseAndSetIfChanged(ref _Targets, value);

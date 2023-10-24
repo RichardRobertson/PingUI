@@ -23,11 +23,6 @@ namespace PingUI.ViewModels;
 public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 {
 	/// <summary>
-	/// Backing store for copying history to edited targets.
-	/// </summary>
-	private static readonly Dictionary<Target, ObservableCollection<PingResult>> HistoryTransfer = new();
-
-	/// <summary>
 	/// Disposable container that handles the <see cref="IPinger" /> observable.
 	/// </summary>
 	private readonly SerialDisposable _Pinger;
@@ -78,24 +73,55 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 	private bool _IsFailure;
 
 	/// <summary>
+	/// Backing store for <see cref="Target" />.
+	/// </summary>
+	private Target _Target;
+
+	/// <summary>
+	/// Backing store for <see cref="Address" />.
+	/// </summary>
+	private readonly ObservableAsPropertyHelper<IPAddress> _Address;
+
+	/// <summary>
+	/// Backing store for <see cref="Label" />.
+	/// </summary>
+	private readonly ObservableAsPropertyHelper<string?> _Label;
+
+	/// <summary>
+	/// Backing store for <see cref="CoolDown" />.
+	/// </summary>
+	private readonly ObservableAsPropertyHelper<TimeSpan> _CoolDown;
+
+	/// <summary>
 	/// Initializes a new <see cref="TargetViewModel" />.
 	/// </summary>
 	/// <param name="target">The target to display.</param>
 	public TargetViewModel(Target target)
 	{
-		Target = target;
+		_Target = target;
+		_Address = this.WhenAnyValue(vm => vm.Target)
+			.Select(target => target.Address)
+			.ToProperty(this, vm => vm.Address);
+		_Label = this.WhenAnyValue(vm => vm.Target)
+			.Select(target => target.Label)
+			.ToProperty(this, vm => vm.Label);
+		_CoolDown = this.WhenAnyValue(vm => vm.Target)
+			.Select(target => target.CoolDown)
+			.ToProperty(this, vm => vm.CoolDown);
 		_Pinger = new SerialDisposable();
-		lock (HistoryTransfer)
-		{
-			if (HistoryTransfer.Remove(target, out var history))
+		_History = [new PingResult(IPStatus.Unknown, DateTime.Now)];
+		this.WhenAnyValue(vm => vm.Target)
+			.Buffer(2, 1)
+			.Do(values =>
 			{
-				_History = history;
-			}
-			else
-			{
-				_History = [new PingResult(IPStatus.Unknown, DateTime.Now)];
-			}
-		}
+				IsEnabled = false;
+				if (!EqualityComparer<IPAddress>.Default.Equals(values[0]?.Address, values[1]?.Address))
+				{
+					_History.Clear();
+					_History.Add(new PingResult(IPStatus.Unknown, DateTime.Now));
+				}
+			})
+			.Subscribe();
 		this.WhenActivated(disposables =>
 		{
 			_Pinger.DisposeWith(disposables);
@@ -158,15 +184,7 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 							Locator.Current.GetRequiredService<IErrorReporter>().ReportError(string.Empty, new InvalidOperationException(string.Format(Strings.Shared_Error_DuplicateTarget, target)));
 							return;
 						}
-						if (target.Address == Target.Address)
-						{
-							lock (HistoryTransfer)
-							{
-								HistoryTransfer[target] = _History;
-							}
-						}
 						configuration.Targets.Replace(Target, target);
-						_Pinger.Dispose();
 					}
 				})
 				.Subscribe();
@@ -185,7 +203,8 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 	/// </summary>
 	public Target Target
 	{
-		get;
+		get => _Target;
+		set => this.RaiseAndSetIfChanged(ref _Target, value);
 	}
 
 	/// <summary>
@@ -256,7 +275,7 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 	/// </summary>
 	public IPAddress Address
 	{
-		get => Target.Address;
+		get => _Address.Value;
 	}
 
 	/// <summary>
@@ -264,7 +283,7 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 	/// </summary>
 	public string? Label
 	{
-		get => Target.Label;
+		get => _Label.Value;
 	}
 
 	/// <summary>
@@ -272,7 +291,7 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 	/// </summary>
 	public TimeSpan CoolDown
 	{
-		get => Target.CoolDown;
+		get => _CoolDown.Value;
 	}
 
 	/// <summary>
