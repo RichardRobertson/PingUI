@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Repeat count parameter for `FakeTogglePinger` which assists in testing
+- Ability to move targets up and down in the list ([#4](https://github.com/RichardRobertson/PingUI/issues/4))
+
+### Changed
+
+- Updated Nuget package references
+- History is now only preserved when `TargetViewModel.Target.Address` does not change ([#5](https://github.com/RichardRobertson/PingUI/issues/5))
+- `TargetViewModel.Target` can now be updated ([#7](https://github.com/RichardRobertson/PingUI/issues/7))
+
+### Fixed
+
+- `TargetViewModel` alerts only trigger once per state change ([#1](https://github.com/RichardRobertson/PingUI/issues/1))
+- `IPinger` implementation scheduling fix ([#3](https://github.com/RichardRobertson/PingUI/issues/3))
+- Prevent adding two identical targets to the list ([#6](https://github.com/RichardRobertson/PingUI/issues/6))
+
 ## [1.0.0] - 2023-9-27
 
 First release

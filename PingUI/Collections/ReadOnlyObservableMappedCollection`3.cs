@@ -11,6 +11,12 @@ using DynamicData.Binding;
 
 namespace PingUI.Collections;
 
+/// <summary>
+/// Represents a readonly collection wrapper that wraps the individual items of the source collection and provides update notifications.
+/// </summary>
+/// <typeparam name="TKey">The type of the items in the source collection.</typeparam>
+/// <typeparam name="TSourceCollection">The type of the source collection.</typeparam>
+/// <typeparam name="TValue">The type of the item wrapper.</typeparam>
 public class ReadOnlyObservableMappedCollection<TKey, TSourceCollection, TValue> :
 	IReadOnlyList<TValue>,
 	IList,
@@ -19,22 +25,54 @@ public class ReadOnlyObservableMappedCollection<TKey, TSourceCollection, TValue>
 	IDisposable
 	where TSourceCollection : INotifyCollectionChanged, IReadOnlyList<TKey>
 {
+	/// <summary>
+	/// Reference to the source collection.
+	/// </summary>
 	private readonly TSourceCollection _SourceCollection;
 
+	/// <summary>
+	/// Backing store for the wrapper collection.
+	/// </summary>
 	private readonly ObservableCollectionExtended<TValue> _ValueCollection;
 
+	/// <summary>
+	/// A function that creates a new wrapper item from a source item.
+	/// </summary>
 	private readonly Func<TKey, TValue> _Create;
 
+	/// <summary>
+	/// A function that modifies an existing wrapper item with a new source item.
+	/// </summary>
 	private readonly Action<TKey, TValue> _Modify;
 
+	/// <summary>
+	/// A function that gets the source item from a wrapper item.
+	/// </summary>
 	private readonly Func<TValue, TKey> _GetKey;
 
+	/// <summary>
+	/// Equality comparer for source items to verify changes.
+	/// </summary>
 	private readonly IEqualityComparer<TKey> _KeyComparer;
 
+	/// <summary>
+	/// Storage for <see cref="Dispose(bool)" />.
+	/// </summary>
 	private readonly CompositeDisposable _Disposables;
 
+	/// <summary>
+	/// Signal for <see cref="Dispose(bool)" />.
+	/// </summary>
 	private bool disposedValue;
 
+	/// <summary>
+	/// Initializes a new <see cref="ReadOnlyObservableMappedCollection{TKey, TSourceCollection, TValue}" />.
+	/// </summary>
+	/// <param name="sourceCollection">The source collection to wrap items from.</param>
+	/// <param name="create">A function that creates a new wrapper item from a source item.</param>
+	/// <param name="modify">A function that modifies an existing wrapper item with a new source item.</param>
+	/// <param name="getKey">A function that gets the source item from a wrapper item.</param>
+	/// <param name="keyComparer">Equality comparer for source items to verify changes.</param>
 	public ReadOnlyObservableMappedCollection(TSourceCollection sourceCollection, Func<TKey, TValue> create, Action<TKey, TValue> modify, Func<TValue, TKey> getKey, IEqualityComparer<TKey>? keyComparer = null)
 	{
 		ArgumentNullException.ThrowIfNull(sourceCollection);
@@ -50,6 +88,10 @@ public class ReadOnlyObservableMappedCollection<TKey, TSourceCollection, TValue>
 		_Disposables = [_SourceCollection.ToObservableChangeSet<TSourceCollection, TKey>().Subscribe(OnSourceCollectionChanged)];
 	}
 
+	/// <summary>
+	/// Handle changes to the source collection.
+	/// </summary>
+	/// <param name="changes">The set of changes published.</param>
 	private void OnSourceCollectionChanged(IChangeSet<TKey> changes)
 	{
 		foreach (var change in changes)
@@ -129,27 +171,35 @@ public class ReadOnlyObservableMappedCollection<TKey, TSourceCollection, TValue>
 		}
 	}
 
+	/// <inheritdoc />
 	public TValue this[int index] => _ValueCollection[index];
 
+	/// <inheritdoc />
 	public int Count => _ValueCollection.Count;
 
+	/// <inheritdoc />
 	bool IList.IsFixedSize => false;
 
+	/// <inheritdoc />
 	bool IList.IsReadOnly => true;
 
+	/// <inheritdoc />
 	bool ICollection.IsSynchronized => false;
 
+	/// <inheritdoc />
 	object ICollection.SyncRoot
 	{
 		get;
 	} = new();
 
+	/// <inheritdoc />
 	object? IList.this[int index]
 	{
 		get => this[index];
 		set => throw new InvalidOperationException();
 	}
 
+	/// <inheritdoc />
 	public event NotifyCollectionChangedEventHandler? CollectionChanged
 	{
 		add
@@ -162,6 +212,7 @@ public class ReadOnlyObservableMappedCollection<TKey, TSourceCollection, TValue>
 		}
 	}
 
+	/// <inheritdoc />
 	public event PropertyChangedEventHandler? PropertyChanged
 	{
 		add
@@ -174,16 +225,22 @@ public class ReadOnlyObservableMappedCollection<TKey, TSourceCollection, TValue>
 		}
 	}
 
+	/// <inheritdoc />
 	public IEnumerator<TValue> GetEnumerator()
 	{
 		return _ValueCollection.GetEnumerator();
 	}
 
+	/// <inheritdoc />
 	IEnumerator IEnumerable.GetEnumerator()
 	{
 		return GetEnumerator();
 	}
 
+	/// <summary>
+	/// Implementation for <see cref="Dispose()" />.
+	/// </summary>
+	/// <param name="disposing"><see langword="true" /> if called from <see cref="Dispose()" />; <see langword="false" /> if called from finalizer.</param>
 	protected virtual void Dispose(bool disposing)
 	{
 		if (!disposedValue)
@@ -204,47 +261,56 @@ public class ReadOnlyObservableMappedCollection<TKey, TSourceCollection, TValue>
 		}
 	}
 
+	/// <inheritdoc />
 	public void Dispose()
 	{
 		Dispose(disposing: true);
 		GC.SuppressFinalize(this);
 	}
 
+	/// <inheritdoc />
 	int IList.Add(object? value)
 	{
 		throw new InvalidOperationException();
 	}
 
+	/// <inheritdoc />
 	void IList.Clear()
 	{
 		throw new InvalidOperationException();
 	}
 
+	/// <inheritdoc />
 	bool IList.Contains(object? value)
 	{
 		return value is TValue tValue && _ValueCollection.Contains(tValue);
 	}
 
+	/// <inheritdoc />
 	int IList.IndexOf(object? value)
 	{
 		return value is TValue tValue ? _ValueCollection.IndexOf(tValue) : -1;
 	}
 
+	/// <inheritdoc />
 	void IList.Insert(int index, object? value)
 	{
 		throw new InvalidOperationException();
 	}
 
+	/// <inheritdoc />
 	void IList.Remove(object? value)
 	{
 		throw new InvalidOperationException();
 	}
 
+	/// <inheritdoc />
 	void IList.RemoveAt(int index)
 	{
 		throw new InvalidOperationException();
 	}
 
+	/// <inheritdoc />
 	void ICollection.CopyTo(Array array, int index)
 	{
 		((ICollection)_ValueCollection).CopyTo(array, index);
