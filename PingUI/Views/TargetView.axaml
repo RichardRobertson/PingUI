@@ -52,6 +52,19 @@
 					</MenuItem.Icon>
 				</MenuItem>
 				<Separator />
+				<MenuItem Header="{x:Static i18n:Strings.TargetView_Menu_MoveUp}"
+					Command="{Binding MoveUpCommand}">
+					<MenuItem.Icon>
+						<ic:SymbolIcon Symbol="ArrowUp" />
+					</MenuItem.Icon>
+				</MenuItem>
+				<MenuItem Header="{x:Static i18n:Strings.TargetView_Menu_MoveDown}"
+					Command="{Binding MoveDownCommand}">
+					<MenuItem.Icon>
+						<ic:SymbolIcon Symbol="ArrowDown" />
+					</MenuItem.Icon>
+				</MenuItem>
+				<Separator />
 				<MenuItem Header="{x:Static i18n:Strings.TargetView_Menu_Clear}"
 					Command="{Binding ClearHistoryCommand}" />
 				<MenuItem Header="{x:Static i18n:Strings.TargetView_Menu_Delete}"

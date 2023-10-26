@@ -20,7 +20,7 @@ namespace PingUI.ViewModels;
 /// <summary>
 /// Represents an interface that displays a <see cref="Models.Target" /> and interacts with the <see cref="IPinger" /> service.
 /// </summary>
-public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
+public sealed class TargetViewModel : ViewModelBase, IDisposable
 {
 	/// <summary>
 	/// Disposable container that handles the <see cref="IPinger" /> observable.
@@ -78,6 +78,16 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 	private Target _Target;
 
 	/// <summary>
+	/// Signal for <see cref="Dispose(bool)" />.
+	/// </summary>
+	private bool disposedValue;
+
+	/// <summary>
+	/// Storage for <see cref="Dispose(bool)" />.
+	/// </summary>
+	private readonly CompositeDisposable _Disposables;
+
+	/// <summary>
 	/// Backing store for <see cref="Address" />.
 	/// </summary>
 	private readonly ObservableAsPropertyHelper<IPAddress> _Address;
@@ -110,6 +120,7 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 			.ToProperty(this, vm => vm.CoolDown);
 		_Pinger = new SerialDisposable();
 		_History = [new PingResult(IPStatus.Unknown, DateTime.Now)];
+		_Disposables = [];
 		this.WhenAnyValue(vm => vm.Target)
 			.Buffer(2, 1)
 			.Do(values =>
@@ -121,48 +132,47 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 					_History.Add(new PingResult(IPStatus.Unknown, DateTime.Now));
 				}
 			})
-			.Subscribe();
-		this.WhenActivated(disposables =>
-		{
-			_Pinger.DisposeWith(disposables);
-			_History.ToObservableChangeSet()
-				.OnItemAdded(change =>
+			.Subscribe()
+			.DisposeWith(_Disposables);
+		_Pinger.DisposeWith(_Disposables);
+		_History.ToObservableChangeSet()
+			.OnItemAdded(change =>
+			{
+				switch (change.Status)
 				{
-					switch (change.Status)
-					{
-						case IPStatus.Unknown:
-							IsUnknown = true;
-							IsSuccess = false;
-							IsFailure = false;
-							break;
-						case IPStatus.Success:
-							IsUnknown = false;
-							IsSuccess = true;
-							IsFailure = false;
-							break;
-						default:
-							IsUnknown = false;
-							IsSuccess = false;
-							IsFailure = true;
-							IsAlert = true;
-							break;
-					}
-				})
-				.Cast(result => new PingResultViewModel(result))
-				.Bind(out var transitions)
-				.Subscribe()
-				.DisposeWith(disposables);
-			Transitions = transitions;
-		});
+					case IPStatus.Unknown:
+						IsUnknown = true;
+						IsSuccess = false;
+						IsFailure = false;
+						break;
+					case IPStatus.Success:
+						IsUnknown = false;
+						IsSuccess = true;
+						IsFailure = false;
+						break;
+					default:
+						IsUnknown = false;
+						IsSuccess = false;
+						IsFailure = true;
+						IsAlert = true;
+						break;
+				}
+			})
+			.Cast(result => new PingResultViewModel(result))
+			.Bind(out var transitions)
+			.Subscribe()
+			.DisposeWith(_Disposables);
+		Transitions = transitions;
 		PromptForDeleteInteraction = new Interaction<Target, bool?>();
 		PromptForEditInteraction = new Interaction<Target, Target?>();
 		ClearAlertCommand = ReactiveCommand.Create(() => { IsAlert = false; }, this.WhenAnyValue(vm => vm.IsAlert));
 		DeleteSelfCommand = ReactiveCommand.Create(() =>
 		{
 			PromptForDeleteInteraction.Handle(Target)
+				.ObserveOn(RxApp.MainThreadScheduler)
 				.Do(result =>
 				{
-					if (true.Equals(result))
+					if (result == true)
 					{
 						var configuration = Locator.Current.GetRequiredService<IConfiguration>();
 						configuration.Targets.Remove(Target);
@@ -174,6 +184,7 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 		EditSelfCommand = ReactiveCommand.Create(() =>
 		{
 			PromptForEditInteraction.Handle(Target)
+				.ObserveOn(RxApp.MainThreadScheduler)
 				.Do(result =>
 				{
 					if (result is Target target && target != Target)
@@ -196,6 +207,27 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 			Successes = 0;
 			PingCount = 0;
 		});
+		var configuration = Locator.Current.GetRequiredService<IConfiguration>();
+		MoveUpCommand = ReactiveCommand.Create(
+			() =>
+			{
+				var configuration = Locator.Current.GetRequiredService<IConfiguration>();
+				var index = configuration.Targets.IndexOf(Target);
+				configuration.Targets.Move(index, index - 1);
+			},
+			configuration.Targets
+				.ToObservableChangeSet()
+				.Select(_ => configuration.Targets.IndexOf(Target) != 0));
+		MoveDownCommand = ReactiveCommand.Create(
+			() =>
+			{
+				var configuration = Locator.Current.GetRequiredService<IConfiguration>();
+				var index = configuration.Targets.IndexOf(Target);
+				configuration.Targets.Move(index, index + 1);
+			},
+			configuration.Targets
+				.ToObservableChangeSet()
+				.Select(_ => configuration.Targets.IndexOf(Target) != configuration.Targets.Count - 1));
 	}
 
 	/// <summary>
@@ -394,6 +426,22 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 	}
 
 	/// <summary>
+	/// A command to move this target up in the list.
+	/// </summary>
+	public ReactiveCommand<Unit, Unit> MoveUpCommand
+	{
+		get;
+	}
+
+	/// <summary>
+	/// A command to move this target down in the list.
+	/// </summary>
+	public ReactiveCommand<Unit, Unit> MoveDownCommand
+	{
+		get;
+	}
+
+	/// <summary>
 	/// An interaction with the intent of confirming deletion of this target.
 	/// </summary>
 	public Interaction<Target, bool?> PromptForDeleteInteraction
@@ -409,9 +457,27 @@ public sealed class TargetViewModel : ViewModelBase, IActivatableViewModel
 		get;
 	}
 
-	/// <inheritdoc />
-	public ViewModelActivator Activator
+	/// <summary>
+	/// Implementation for <see cref="Dispose()" />.
+	/// </summary>
+	/// <param name="disposing"><see langword="true" /> if called from <see cref="Dispose()" />; <see langword="false" /> if called from finalizer.</param>
+	private void Dispose(bool disposing)
 	{
-		get;
-	} = new();
+		if (!disposedValue)
+		{
+			if (disposing)
+			{
+				_Disposables.Dispose();
+			}
+			disposedValue = true;
+		}
+	}
+
+	/// <inheritdoc />
+	public void Dispose()
+	{
+		// Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+		Dispose(disposing: true);
+		GC.SuppressFinalize(this);
+	}
 }

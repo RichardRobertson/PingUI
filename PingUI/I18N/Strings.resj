@@ -26,6 +26,8 @@
 		"Dialog_Dismiss": "Dismiss",
 		// TargetView
 		"TargetView_Menu_Edit": "Edit",
+		"TargetView_Menu_MoveUp": "Move Up",
+		"TargetView_Menu_MoveDown": "Move Down",
 		"TargetView_Menu_Clear": "Clear History",
 		"TargetView_Menu_Delete": "Delete",
 		"TargetView_ToolTip_Play": "Start pinging",
