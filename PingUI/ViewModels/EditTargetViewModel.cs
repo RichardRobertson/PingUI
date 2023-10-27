@@ -1,10 +1,11 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Reactive;
 using System.Reactive.Linq;
 using DialogHostAvalonia;
+using DynamicData.Binding;
 using PingUI.I18N;
 using PingUI.Models;
 using ReactiveUI;
@@ -49,21 +50,21 @@ public class EditTargetViewModel : ViewModelBase
 	private bool _IsZeroCoolDown;
 
 	/// <summary>
+	/// Backing store for <see cref="IPSuggestions" />.
+	/// </summary>
+	private readonly ObservableCollectionExtended<IPAddress> _IPSuggestions;
+
+	/// <summary>
+	/// Backing store for <see cref="IPResolutionState" />.
+	/// </summary>
+	private DnsState _IPResolutionState;
+
+	/// <summary>
 	/// Initializes a new <see cref="EditTargetViewModel" />.
 	/// </summary>
 	/// <param name="target">The <see cref="Target" /> to edit or <see langword="null" /> to create a new one.</param>
 	public EditTargetViewModel(Target? target)
 	{
-		this.ValidationRule(vm => vm.Address, address => !string.IsNullOrWhiteSpace(address), Strings.EditTargetView_IPAddressBlank);
-		this.ValidationRule(vm => vm.Address, address => string.IsNullOrWhiteSpace(address) || IPAddress.TryParse(address, out var _), Strings.EditTargetView_IPAddressParseError);
-		this.ValidationRule(
-			this.WhenAnyValue(
-				vm => vm.Hours,
-				vm => vm.Minutes,
-				vm => vm.Seconds,
-				(hours, minutes, seconds) => (hours ?? 0) + (minutes ?? 0) + (seconds ?? 0) != 0)
-				.Do(isNotZeroCoolDown => IsZeroCoolDown = !isNotZeroCoolDown),
-			Strings.EditTargetView_ZeroCoolDownError);
 		IsNewTarget = target is null;
 		Address = target?.Address.ToString();
 		Label = target?.Label;
@@ -80,6 +81,96 @@ public class EditTargetViewModel : ViewModelBase
 							Label,
 							new TimeSpan(_Hours ?? 0, _Minutes ?? 0, _Seconds ?? 0))),
 			ValidationContext.Valid);
+		_IPSuggestions = [];
+		IPSuggestions = new ReadOnlyObservableCollection<IPAddress>(_IPSuggestions);
+		ApplyIPSuggestionCommand = ReactiveCommand.Create<IPAddress>(ipAddress =>
+		{
+			Label = Address;
+			Address = ipAddress.ToString();
+			_IPSuggestions.Clear();
+			IPResolutionState = DnsState.None;
+		});
+		this.WhenAnyValue(vm => vm.Address)
+			.Throttle(TimeSpan.FromMilliseconds(500))
+			.Select(name => Observable.FromAsync(async (cancellationToken) =>
+			{
+				_IPSuggestions.Clear();
+				IPResolutionState = DnsState.None;
+				if (Uri.CheckHostName(name) == UriHostNameType.Dns)
+				{
+					IPResolutionState = DnsState.Resolving;
+					try
+					{
+						var entry = await Dns.GetHostEntryAsync(name!, cancellationToken).ConfigureAwait(false);
+						_IPSuggestions.AddRange(entry.AddressList.OrderBy(ip => ip.AddressFamily));
+					}
+					catch
+					{
+						// catch block intentionally empty
+					}
+					IPResolutionState = _IPSuggestions.Count == 0 ? DnsState.Failure : DnsState.Success;
+				}
+			}))
+			.Concat()
+			.Subscribe();
+		this.ValidationRule(
+			vm => vm.Address,
+			this.WhenAnyValue(
+				vm => vm.Address,
+				vm => vm.IPResolutionState,
+				(address, state) => !(Uri.CheckHostName(address) == UriHostNameType.Dns && state == DnsState.Success)),
+			Strings.EditTargetView_AddressSelectIP);
+		this.ValidationRule(
+			vm => vm.Address,
+			this.WhenAnyValue(
+				vm => vm.Address,
+				vm => vm.IPResolutionState,
+				(address, state) => !(Uri.CheckHostName(address) == UriHostNameType.Dns && state == DnsState.Resolving)),
+			Strings.EditTargetView_AddressChecking);
+		this.ValidationRule(vm => vm.Address, address => !string.IsNullOrWhiteSpace(address), Strings.EditTargetView_AddressBlank);
+		this.ValidationRule(
+			vm => vm.Address,
+			this.WhenAnyValue(
+				vm => vm.Address,
+				vm => vm.IPResolutionState,
+				(address, state) =>
+				{
+					if (string.IsNullOrWhiteSpace(address))
+					{
+						return true;
+					}
+					return Uri.CheckHostName(address) switch
+					{
+						UriHostNameType.Dns or UriHostNameType.IPv4 or UriHostNameType.IPv6 => state != DnsState.Failure,
+						_ => false,
+					};
+				}),
+			Strings.EditTargetView_AddressParseError);
+		this.ValidationRule(
+			this.WhenAnyValue(
+				vm => vm.Hours,
+				vm => vm.Minutes,
+				vm => vm.Seconds,
+				(hours, minutes, seconds) => (hours ?? 0) + (minutes ?? 0) + (seconds ?? 0) != 0)
+				.Do(isNotZeroCoolDown => IsZeroCoolDown = !isNotZeroCoolDown),
+			Strings.EditTargetView_ZeroCoolDownError);
+	}
+
+	/// <summary>
+	/// Contains a list indicating the resolved IP addresses of a host name entered into <see cref="Address" />.
+	/// </summary>
+	public ReadOnlyObservableCollection<IPAddress> IPSuggestions
+	{
+		get;
+	}
+
+	/// <summary>
+	/// Indicates the state of the DNS resolution process.
+	/// </summary>
+	public DnsState IPResolutionState
+	{
+		get => _IPResolutionState;
+		private set => this.RaiseAndSetIfChanged(ref _IPResolutionState, value);
 	}
 
 	/// <summary>
@@ -165,5 +256,39 @@ public class EditTargetViewModel : ViewModelBase
 	public ReactiveCommand<Unit, Unit> AcceptDialogCommand
 	{
 		get;
+	}
+
+	/// <summary>
+	/// A command to apply one of the suggested IP addresses.
+	/// </summary>
+	public ReactiveCommand<IPAddress, Unit> ApplyIPSuggestionCommand
+	{
+		get;
+	}
+
+	/// <summary>
+	/// Indicates the state of the DNS resolution process.
+	/// </summary>
+	public enum DnsState
+	{
+		/// <summary>
+		/// No process running.
+		/// </summary>
+		None,
+
+		/// <summary>
+		/// Currently running.
+		/// </summary>
+		Resolving,
+
+		/// <summary>
+		/// Resolution success.
+		/// </summary>
+		Success,
+
+		/// <summary>
+		/// Resolution failure.
+		/// </summary>
+		Failure,
 	}
 }

@@ -9,8 +9,10 @@
 		"EditTargetView_Minutes": "Minutes",
 		"EditTargetView_Seconds": "Seconds",
 		"EditTargetView_ZeroCoolDownError": "Enter non-zero cool down",
-		"EditTargetView_IPAddressBlank": "Enter IP address",
-		"EditTargetView_IPAddressParseError": "Invalid IP address",
+		"EditTargetView_AddressBlank": "Enter IP address or hostname",
+		"EditTargetView_AddressParseError": "Invalid IP address or hostname",
+		"EditTargetView_AddressSelectIP": "Select an IP address",
+		"EditTargetView_AddressChecking": "Checking...",
 		// Shared DeleteTargetView and EditTargetView field labels
 		"Shared_Label_Address": "Address: ",
 		"Shared_Label_Label": "Label: ",

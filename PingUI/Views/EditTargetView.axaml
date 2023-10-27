@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:vm="using:PingUI.ViewModels"
+	xmlns:v="using:PingUI.Views"
 	xmlns:i18n="using:PingUI.I18N"
 	x:Class="PingUI.Views.EditTargetView"
 	x:DataType="vm:EditTargetViewModel">
@@ -15,7 +16,7 @@
 		</StackPanel.Styles>
 		<TextBlock Margin="8" FontSize="24" HorizontalAlignment="Center"
 			Classes.IsNew="{Binding IsNewTarget}" Classes.IsNotNew="{Binding !IsNewTarget}" />
-		<Grid ColumnDefinitions="Auto *" RowDefinitions="Auto Auto Auto" Margin="8"
+		<Grid ColumnDefinitions="Auto *" RowDefinitions="Auto Auto Auto Auto" Margin="8"
 			HorizontalAlignment="Center">
 			<Grid.Styles>
 				<Style Selector="Label">
@@ -31,13 +32,24 @@
 				ToolTip.Tip="{x:Static i18n:Strings.Shared_ToolTip_Address}"
 				Target="AddressText" />
 			<TextBox x:Name="AddressText" Text="{Binding Address}" />
-			<Label Content="{x:Static i18n:Strings.Shared_Label_Label}" Grid.Row="1"
+			<ItemsRepeater ItemsSource="{Binding IPSuggestions}" Grid.Row="1" Grid.Column="1">
+				<ItemsRepeater.Layout>
+					<WrapLayout />
+				</ItemsRepeater.Layout>
+				<ItemsRepeater.ItemTemplate>
+					<DataTemplate>
+						<Button Content="{Binding}" CommandParameter="{Binding}" Margin="4"
+							Command="{Binding ((vm:EditTargetViewModel)DataContext).ApplyIPSuggestionCommand, RelativeSource={RelativeSource AncestorType=ItemsRepeater}}" />
+					</DataTemplate>
+				</ItemsRepeater.ItemTemplate>
+			</ItemsRepeater>
+			<Label Content="{x:Static i18n:Strings.Shared_Label_Label}" Grid.Row="2"
 				ToolTip.Tip="{x:Static i18n:Strings.Shared_ToolTip_Label}"
 				Target="LabelText" />
-			<TextBox x:Name="LabelText" Text="{Binding Label}" Grid.Row="1" />
-			<Label Content="{x:Static i18n:Strings.Shared_Label_CoolDown}" Grid.Row="2"
+			<TextBox x:Name="LabelText" Text="{Binding Label}" Grid.Row="2" />
+			<Label Content="{x:Static i18n:Strings.Shared_Label_CoolDown}" Grid.Row="3"
 				ToolTip.Tip="{x:Static i18n:Strings.Shared_ToolTip_CoolDown}" />
-			<Grid Grid.Row="2" Grid.Column="1" ColumnDefinitions="Auto Auto Auto Auto"
+			<Grid Grid.Row="3" Grid.Column="1" ColumnDefinitions="Auto Auto Auto Auto"
 				RowDefinitions="Auto Auto Auto">
 				<Grid.Styles>
 					<Style Selector="Label">
