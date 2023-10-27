@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Repeat count parameter for `FakeTogglePinger` which assists in testing
 - Ability to move targets up and down in the list ([#4](https://github.com/RichardRobertson/PingUI/issues/4))
+- Ability to resolve hostnames instead of only typing in IP addresses ([#2](https://github.com/RichardRobertson/PingUI/issues/2))
 
 ### Changed
 

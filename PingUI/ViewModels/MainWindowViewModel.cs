@@ -5,8 +5,6 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using DialogHostAvalonia;
-using DynamicData;
-using DynamicData.Binding;
 using PingUI.Collections;
 using PingUI.Extensions;
 using PingUI.I18N;
