@@ -29,6 +29,8 @@ $msiPath = Join-Path $binPath "$Product-$RuntimeIdentifier-v$Version.msi"
 $wxsPath = Join-Path $objPath 'package.wxs'
 $zipPath = [System.IO.Path]::ChangeExtension($msiPath, '.zip')
 
+$Version = $Version.Substring(0, $Version.LastIndexOf('.'))
+
 if (!(Test-Path $binPath))
 {
 	New-Item $binPath -ItemType Directory | Out-Null
