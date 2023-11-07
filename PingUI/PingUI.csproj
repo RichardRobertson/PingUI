@@ -33,6 +33,12 @@
 		</JsonResource>
 	</ItemGroup>
 
+	<Target Name="BuildInstaller" AfterTargets="Publish" Condition="'$(Configuration)' == 'Release'">
+		<Message Text="Zip publish contents and build MSI file" Importance="High" />
+		<Exec
+			Command="pwsh $(SolutionDir)build-package.ps1 -ProjectDir &quot;$(ProjectDir.TrimEnd('\'))&quot; -PublishDir &quot;$(PublishDir.TrimEnd('\'))&quot; -SolutionDir &quot;$(SolutionDir.TrimEnd('\'))&quot; -AssemblyName &quot;$(AssemblyName)&quot; -Product &quot;$(Product)&quot; -RuntimeIdentifier &quot;$(RuntimeIdentifier)&quot; -Version &quot;$(Version)&quot;" />
+	</Target>
+
 	<ItemGroup>
 		<PackageReference Include="Avalonia" Version="11.0.4" />
 		<PackageReference Include="Avalonia.Desktop" Version="11.0.4" />
