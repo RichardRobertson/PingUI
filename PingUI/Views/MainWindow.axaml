@@ -8,7 +8,7 @@
 	xmlns:dialogHost="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
 	x:Class="PingUI.Views.MainWindow"
 	x:DataType="vm:MainWindowViewModel"
-	Icon="/Assets/avalonia-logo.ico" Title="{x:Static i18n:Strings.MainWindow_Title}"
+	Title="{x:Static i18n:Strings.MainWindow_Title}"
 	Width="450" Height="600" Topmost="{Binding Topmost}"
 	TransparencyLevelHint="AcrylicBlur" Background="Transparent"
 	ExtendClientAreaToDecorationsHint="True"

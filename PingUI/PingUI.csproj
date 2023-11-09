@@ -16,8 +16,8 @@
 		<Description>GUI for continuously pinging network targets.</Description>
 		<Product>PingUI</Product>
 		<AssemblyTitle>PingUI</AssemblyTitle>
-		<Version>1.1.0.0</Version>
-		<ApplicationIcon>Assets/avalonia-logo.ico</ApplicationIcon>
+		<Version>1.2.0.0</Version>
+		<ApplicationIcon>Assets/PingUI.ico</ApplicationIcon>
 	</PropertyGroup>
 
 	<ItemGroup>

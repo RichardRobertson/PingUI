@@ -5,12 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.2.0] - 2023-11-9
 
 ### Added
 
 - Automatic zip and msi package creation on release publish
-- Ability to check for updates on startup
+- Ability to check for updates on startup ([#8](https://github.com/RichardRobertson/PingUI/issues/8))
+- New application icon to get rid of default Avalonia logo
 
 ## [1.1.0] - 2023-10-27
 

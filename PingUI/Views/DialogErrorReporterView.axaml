@@ -5,7 +5,7 @@
 	xmlns:ic="using:FluentIcons.FluentAvalonia"
 	x:Class="PingUI.Views.DialogErrorReporterView"
 	x:DataType="vm:DialogErrorReporterViewModel"
-	Icon="/Assets/avalonia-logo.ico" Title="{x:Static i18n:Strings.DialogErrorReporterView_Title}"
+	Title="{x:Static i18n:Strings.DialogErrorReporterView_Title}"
 	SizeToContent="WidthAndHeight" CanResize="False">
 	<DockPanel>
 		<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="8"

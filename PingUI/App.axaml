@@ -10,5 +10,8 @@
 	<Application.Styles>
 		<FluentTheme />
 		<dialogHostAvalonia:DialogHostStyles />
+		<Style Selector="Window">
+			<Setter Property="Icon" Value="/Assets/PingUI.ico" />
+		</Style>
 	</Application.Styles>
 </Application>
