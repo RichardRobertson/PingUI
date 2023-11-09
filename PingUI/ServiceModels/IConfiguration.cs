@@ -30,4 +30,14 @@ public interface IConfiguration
 		get;
 		set;
 	}
+
+	/// <summary>
+	/// Indicates whether the app should check for updates on startup.
+	/// </summary>
+	/// <value><see langword="null" /> for unknown, <see langword="true" /> to check for updates, <see langword="false" /> not to check for updates.</value>
+	bool? CheckOnlineForUpdates
+	{
+		get;
+		set;
+	}
 }

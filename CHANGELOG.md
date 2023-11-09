@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Automatic zip and msi package creation on release publish
+- Ability to check for updates on startup
 
 ## [1.1.0] - 2023-10-27
 

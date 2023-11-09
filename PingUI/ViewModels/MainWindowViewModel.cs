@@ -1,9 +1,13 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Net.Http;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
+using System.Text.Json;
+using System.Threading.Tasks;
 using DialogHostAvalonia;
 using PingUI.Collections;
 using PingUI.Extensions;
@@ -20,6 +24,11 @@ namespace PingUI.ViewModels;
 /// </summary>
 public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 {
+	/// <summary>
+	/// The GitHub API path to check for updates.
+	/// </summary>
+	public const string GitHubApiReleasesUri = "https://api.github.com/repos/RichardRobertson/PingUI/releases/latest";
+
 	/// <summary>
 	/// Reference to the current application configuration.
 	/// </summary>
@@ -45,6 +54,7 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 				tvm => tvm.Target);
 			Targets.DisposeWith(disposables);
 			Disposable.Create(() => Targets = null).DisposeWith(disposables);
+			Observable.FromAsync(CheckForUpdatesAsync).Subscribe().DisposeWith(disposables);
 		});
 		AddTargetCommand = ReactiveCommand.Create(() =>
 		{
@@ -64,6 +74,49 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 				})
 				.Subscribe();
 		});
+	}
+
+	/// <summary>
+	/// Check for updates from a new GitHub release.
+	/// </summary>
+	/// <returns>The task object representing the asynchronous operation.</returns>
+	private async Task CheckForUpdatesAsync()
+	{
+		configuration.CheckOnlineForUpdates ??= await DialogHost.Show(new AskToEnableUpdateCheckViewModel()).ConfigureAwait(false) as bool?;
+		if (configuration.CheckOnlineForUpdates != true)
+		{
+			return;
+		}
+		try
+		{
+			using var client = new HttpClient();
+			client.DefaultRequestHeaders.UserAgent.ParseAdd($"github.com-RichardRobertson-PingUI/{typeof(MainWindowViewModel).Assembly.GetName().Version}");
+			var response = await client.GetAsync(GitHubApiReleasesUri).ConfigureAwait(false);
+			var responseJson = JsonSerializer.Deserialize<JsonElement>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+			if (responseJson.ValueKind == JsonValueKind.Object &&
+				responseJson.TryGetProperty("tag_name", out var tagNameElement) &&
+				tagNameElement.GetString() is string tagName &&
+				Version.TryParse(tagName[1..], out var version) &&
+#if !DEBUG
+				typeof(MainWindowViewModel).Assembly.GetName().Version < version &&
+#endif
+				responseJson.TryGetProperty("html_url", out var htmlUrlElement) &&
+				htmlUrlElement.GetString() is string htmlUrl &&
+				responseJson.TryGetProperty("body", out var bodyElement) &&
+				bodyElement.GetString() is string body)
+			{
+				RxApp.MainThreadScheduler.Schedule(() =>
+				{
+					DialogHost.Show(new UpdateNotificationViewModel(htmlUrl, body))
+						.ToObservable()
+						.Subscribe();
+				});
+			}
+		}
+		catch (Exception exception)
+		{
+			Locator.Current.GetRequiredService<IErrorReporter>().ReportError(Strings.MainWindow_Error_CheckForUpdatesAsync, exception);
+		}
 	}
 
 	/// <summary>

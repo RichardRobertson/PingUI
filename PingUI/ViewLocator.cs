@@ -16,6 +16,8 @@ public class ViewLocator : IDataTemplate
 			EditTargetViewModel => new EditTargetView(),
 			TargetViewModel => new TargetView(),
 			PingResultViewModel => new PingResultView(),
+			AskToEnableUpdateCheckViewModel => new AskToEnableUpdateCheckView(),
+			UpdateNotificationViewModel => new UpdateNotificationView(),
 			_ => new TextBlock() { Text = "Not Found: " + data.GetType().FullName },
 		};
 	}

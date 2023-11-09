@@ -1,0 +1,17 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vm="using:PingUI.ViewModels"
+	xmlns:i18n="using:PingUI.I18N"
+	x:Class="PingUI.Views.AskToEnableUpdateCheckView"
+	x:DataType="vm:AskToEnableUpdateCheckViewModel">
+	<StackPanel>
+		<TextBlock Text="{x:Static i18n:Strings.AskToEnableUpdateCheckView_Body}" Margin="4" />
+		<StackPanel Orientation="Horizontal" Margin="8" HorizontalAlignment="Right">
+			<Button Content="{x:Static i18n:Strings.Dialog_No}"
+				Command="{Binding NoDialogCommand}" Margin="4" />
+			<Button Content="{x:Static i18n:Strings.Dialog_Yes}"
+				Command="{Binding YesDialogCommand}" Margin="4"
+				Background="DarkGreen" />
+		</StackPanel>
+	</StackPanel>
+</UserControl>

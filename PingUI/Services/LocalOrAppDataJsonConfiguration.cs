@@ -68,6 +68,13 @@ public partial class LocalOrAppDataJsonConfiguration : IConfiguration
 		set;
 	}
 
+	/// <inheritdoc />
+	public bool? CheckOnlineForUpdates
+	{
+		get;
+		set;
+	}
+
 	/// <summary>
 	/// Loads the configuration from the stored JSON or returns a new <see cref="LocalOrAppDataJsonConfiguration" /> if the file does not exist or a loading error occurs.
 	/// </summary>

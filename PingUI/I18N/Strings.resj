@@ -26,6 +26,9 @@
 		"Dialog_Create": "Create",
 		"Dialog_Delete": "Delete",
 		"Dialog_Dismiss": "Dismiss",
+		"Dialog_Yes": "Yes",
+		"Dialog_No": "No",
+		"Dialog_Go": "Go",
 		// TargetView
 		"TargetView_Menu_Edit": "Edit",
 		"TargetView_Menu_MoveUp": "Move Up",
@@ -54,6 +57,7 @@
 		"MainWindow_ToolTip_Unpin": "Unpin window from top",
 		"MainWindow_ToolTip_Add": "Add new target",
 		"MainWindow_Title": "PingUI",
+		"MainWindow_Error_CheckForUpdatesAsync": "Error occurred while checking for updates online.",
 		// DialogErrorReporterView
 		"DialogErrorReporterView_Title": "Error Report",
 		"DialogErrorReporterView_Copy": "Copy to clipboard",
@@ -64,6 +68,10 @@
 		"TargetViewModel_Error_Ping": "Error occurred while pinging `{0}`",
 		// Program
 		"Program_Error_Global": "Error occurred at program level.",
+		// AskToEnableUpdateCheckView
+		"AskToEnableUpdateCheckView_Body": "Would you like to check for updates on app startup?",
+		// UpdateNotificationView
+		"UpdateNotificationView_Header": "Update Available",
 		// Shared error messages
 		"Shared_Error_DuplicateTarget": "Target already exists: {0}"
 	}
