@@ -74,7 +74,7 @@ foreach ($file in $publishFiles)
 	}
 }
 
-$publishFiles | Compress-Archive -DestinationPath $zipPath
+$publishFiles | Compress-Archive -DestinationPath $zipPath -Force
 
 $wxs.Save($wxsPath)
 

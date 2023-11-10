@@ -1,12 +1,15 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using DialogHostAvalonia;
 using PingUI.Collections;
@@ -91,23 +94,16 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 		{
 			using var client = new HttpClient();
 			client.DefaultRequestHeaders.UserAgent.ParseAdd($"github.com-RichardRobertson-PingUI/{typeof(MainWindowViewModel).Assembly.GetName().Version}");
-			var response = await client.GetAsync(GitHubApiReleasesUri).ConfigureAwait(false);
-			var responseJson = JsonSerializer.Deserialize<JsonElement>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
-			if (responseJson.ValueKind == JsonValueKind.Object &&
-				responseJson.TryGetProperty("tag_name", out var tagNameElement) &&
-				tagNameElement.GetString() is string tagName &&
-				Version.TryParse(tagName[1..], out var version) &&
+			var responseJson = await client.GetFromJsonAsync(GitHubApiReleasesUri, JsonContext.Instance.GitHubRelease).ConfigureAwait(false);
+			if (responseJson?.AllSet == true && Version.TryParse(responseJson.TagName[1..], out var version)
 #if !DEBUG
-				typeof(MainWindowViewModel).Assembly.GetName().Version < version &&
+				&& typeof(MainWindowViewModel).Assembly.GetName().Version < version
 #endif
-				responseJson.TryGetProperty("html_url", out var htmlUrlElement) &&
-				htmlUrlElement.GetString() is string htmlUrl &&
-				responseJson.TryGetProperty("body", out var bodyElement) &&
-				bodyElement.GetString() is string body)
+			)
 			{
 				RxApp.MainThreadScheduler.Schedule(() =>
 				{
-					DialogHost.Show(new UpdateNotificationViewModel(htmlUrl, body))
+					DialogHost.Show(new UpdateNotificationViewModel(responseJson.HtmlUrl, responseJson.Body))
 						.ToObservable()
 						.Subscribe();
 				});

@@ -16,7 +16,7 @@ namespace PingUI.Services;
 /// <summary>
 /// A configuration that is stored next to the executable or in special folder <see cref="Environment.SpecialFolder.ApplicationData" /> in JSON format.
 /// </summary>
-public partial class LocalOrAppDataJsonConfiguration : IConfiguration
+public class LocalOrAppDataJsonConfiguration : IConfiguration
 {
 	/// <summary>
 	/// The name of the configuration file.
@@ -35,15 +35,6 @@ public partial class LocalOrAppDataJsonConfiguration : IConfiguration
 	/// The path to the configuration file in the local folder.
 	/// </summary>
 	public static readonly string LocalConfigurationPath = Path.Combine(AppContext.BaseDirectory, ConfigurationFileName);
-
-	/// <summary>
-	/// A helper object for serializing and deserializing to JSON.
-	/// </summary>
-	private static readonly JsonContext jsonContext = new(
-		new JsonSerializerOptions(JsonSerializerDefaults.Web)
-		{
-			PreferredObjectCreationHandling = JsonObjectCreationHandling.Populate
-		});
 
 	/// <inheritdoc />
 	public ObservableCollection<Target> Targets
@@ -98,7 +89,7 @@ public partial class LocalOrAppDataJsonConfiguration : IConfiguration
 				try
 				{
 					using var file = File.OpenRead(path);
-					config = JsonSerializer.Deserialize(file, jsonContext.LocalOrAppDataJsonConfiguration);
+					config = JsonSerializer.Deserialize(file, JsonContext.Instance.LocalOrAppDataJsonConfiguration);
 					if (config is not null)
 					{
 						config.ConfigurationPath = path;
@@ -120,14 +111,6 @@ public partial class LocalOrAppDataJsonConfiguration : IConfiguration
 	{
 		new FileInfo(ConfigurationPath).Directory?.Create();
 		using var file = File.Open(ConfigurationPath, FileMode.Create);
-		JsonSerializer.Serialize(file, this, jsonContext.LocalOrAppDataJsonConfiguration);
-	}
-
-	/// <summary>
-	/// Helper class for serializing and deserializing to JSON.
-	/// </summary>
-	[JsonSerializable(typeof(LocalOrAppDataJsonConfiguration))]
-	internal partial class JsonContext : JsonSerializerContext
-	{
+		JsonSerializer.Serialize(file, this, JsonContext.Instance.LocalOrAppDataJsonConfiguration);
 	}
 }
