@@ -42,7 +42,7 @@ if (!(Test-Path $objPath))
 }
 
 $wxs = [xml]"<Wix xmlns=`"http://wixtoolset.org/schemas/v4/wxs`">
-<Package Name=`"$Product`" Manufacturer=`"Richard Robertson`" Version=`"$Version`" UpgradeCode=`"34486a8a-8c84-4f38-8778-4f9a84a0c263`">
+<Package Name=`"$Product`" Manufacturer=`"Richard Robertson`" Version=`"$Version`" UpgradeCode=`"34486a8a-8c84-4f38-8778-4f9a84a0c263`" Language=`"1033`">
 	<MajorUpgrade DowngradeErrorMessage=`"A newer version of [ProductName] is already installed.`" />
 	<MediaTemplate EmbedCab=`"yes`" />
 	<StandardDirectory Id=`"ProgramFiles6432Folder`">
