@@ -35,20 +35,20 @@
 
 	<Target Name="BuildInstaller" AfterTargets="Publish" Condition="'$(Configuration)' == 'Release'">
 		<Message Text="Zip publish contents and build MSI file" Importance="High" />
-		<Exec Command="pwsh $(SolutionDir)build-package.ps1 -ProjectDir &quot;$(ProjectDir.TrimEnd('\'))&quot; -PublishDir &quot;$(PublishDir.TrimEnd('\'))&quot; -SolutionDir &quot;$(SolutionDir.TrimEnd('\'))&quot; -AssemblyName &quot;$(AssemblyName)&quot; -Product &quot;$(Product)&quot; -RuntimeIdentifier &quot;$(RuntimeIdentifier)&quot; -Version &quot;$(Version)&quot;" />
+		<Exec
+			Command="pwsh $(SolutionDir)build-package.ps1 -ProjectDir &quot;$(ProjectDir.TrimEnd('\'))&quot; -PublishDir &quot;$(PublishDir.TrimEnd('\'))&quot; -SolutionDir &quot;$(SolutionDir.TrimEnd('\'))&quot; -AssemblyName &quot;$(AssemblyName)&quot; -Product &quot;$(Product)&quot; -RuntimeIdentifier &quot;$(RuntimeIdentifier)&quot; -Version &quot;$(Version)&quot;" />
 	</Target>
 
 	<ItemGroup>
-		<PackageReference Include="Avalonia" Version="11.0.4" />
-		<PackageReference Include="Avalonia.Desktop" Version="11.0.4" />
-		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.4" />
-		<PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.4" />
-		<!-- Condition below is needed to remove Avalonia.Diagnostics package from build output in
-		Release configuration. -->
-		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.4" />
-		<PackageReference Include="Avalonia.ReactiveUI" Version="11.0.4" />
+		<PackageReference Include="Avalonia" Version="11.0.7" />
+		<PackageReference Include="Avalonia.Desktop" Version="11.0.7" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.7" />
+		<PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.7" />
+		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics"
+			Version="11.0.7" />
+		<PackageReference Include="Avalonia.ReactiveUI" Version="11.0.7" />
 		<PackageReference Include="DialogHost.Avalonia" Version="0.7.7" />
-		<PackageReference Include="FluentIcons.FluentAvalonia" Version="1.1.220" />
+		<PackageReference Include="FluentIcons.Avalonia.Fluent" Version="1.1.225" />
 		<PackageReference Include="Markdown.Avalonia.Tight" Version="11.0.2" />
 		<PackageReference Include="ReactiveUI.Validation" Version="3.1.7" />
 		<PackageReference Include="Sylvan.BuildTools.Resources" Version="0.6.1">

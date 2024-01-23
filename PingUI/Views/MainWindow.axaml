@@ -4,7 +4,7 @@
 	xmlns:v="using:PingUI.Views"
 	xmlns:i18n="using:PingUI.I18N"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:ic="using:FluentIcons.FluentAvalonia"
+	xmlns:ic="using:FluentIcons.Avalonia.Fluent"
 	xmlns:dialogHost="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
 	x:Class="PingUI.Views.MainWindow"
 	x:DataType="vm:MainWindowViewModel"
