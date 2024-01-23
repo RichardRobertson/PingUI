@@ -22,7 +22,7 @@
 			<ColumnDefinition />
 		</Grid.ColumnDefinitions>
 		<TextBlock Text="{Binding Timestamp, StringFormat={}{0:s}}" Margin="4" />
-		<TextBlock Text="{Binding Status}" Grid.Column="1" Margin="4"
+		<TextBlock Text="{Binding LocalizedStatus}" Grid.Column="1" Margin="4"
 			Classes.Success="{Binding IsSuccess}"
 			Classes.Failure="{Binding IsFailure}" Classes.Unknown="{Binding IsUnknown}" />
 	</Grid>

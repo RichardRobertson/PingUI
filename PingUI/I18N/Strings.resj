@@ -73,6 +73,31 @@
 		// UpdateNotificationView
 		"UpdateNotificationView_Header": "Update Available",
 		// Shared error messages
-		"Shared_Error_DuplicateTarget": "Target already exists: {0}"
+		"Shared_Error_DuplicateTarget": "Target already exists: {0}",
+		// System.Net.NetworkInformation.IPStatus enum
+		"System_Net_NetworkInformation_IPStatus_Success": "Success",
+		"System_Net_NetworkInformation_IPStatus_DestinationNetworkUnreachable": "Destination Network Unreachable",
+		"System_Net_NetworkInformation_IPStatus_DestinationHostUnreachable": "Destination Host Unreachable",
+		"System_Net_NetworkInformation_IPStatus_DestinationProhibited": "Destination Prohibited",
+		"System_Net_NetworkInformation_IPStatus_DestinationProtocolUnreachable": "Destination Protocol Unreachable",
+		"System_Net_NetworkInformation_IPStatus_DestinationPortUnreachable": "Destination Port Unreachable",
+		"System_Net_NetworkInformation_IPStatus_NoResources": "No Resources",
+		"System_Net_NetworkInformation_IPStatus_BadOption": "Bad Option",
+		"System_Net_NetworkInformation_IPStatus_HardwareError": "Hardware Error",
+		"System_Net_NetworkInformation_IPStatus_PacketTooBig": "Packet Too Big",
+		"System_Net_NetworkInformation_IPStatus_TimedOut": "Timed Out",
+		"System_Net_NetworkInformation_IPStatus_BadRoute": "Bad Route",
+		"System_Net_NetworkInformation_IPStatus_TtlExpired": "Ttl Expired",
+		"System_Net_NetworkInformation_IPStatus_TtlReassemblyTimeExceeded": "Ttl Reassembly Time Exceeded",
+		"System_Net_NetworkInformation_IPStatus_ParameterProblem": "Parameter Problem",
+		"System_Net_NetworkInformation_IPStatus_SourceQuench": "Source Quench",
+		"System_Net_NetworkInformation_IPStatus_BadDestination": "Bad Destination",
+		"System_Net_NetworkInformation_IPStatus_DestinationUnreachable": "Destination Unreachable",
+		"System_Net_NetworkInformation_IPStatus_TimeExceeded": "Time Exceeded",
+		"System_Net_NetworkInformation_IPStatus_BadHeader": "Bad Header",
+		"System_Net_NetworkInformation_IPStatus_UnrecognizedNextHeader": "Unrecognized Next Header",
+		"System_Net_NetworkInformation_IPStatus_IcmpError": "Icmp Error",
+		"System_Net_NetworkInformation_IPStatus_DestinationScopeMismatch": "Destination Scope Mismatch",
+		"System_Net_NetworkInformation_IPStatus_Unknown": "Unknown"
 	}
 }
