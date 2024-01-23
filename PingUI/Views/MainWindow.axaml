@@ -35,6 +35,9 @@
 			<Setter Property="HorizontalContentAlignment" Value="Center" />
 			<Setter Property="VerticalContentAlignment" Value="Center" />
 		</Style>
+		<Style Selector="ToggleButton.Chrome ic|SymbolIcon">
+			<Setter Property="FontSize" Value="16" />
+		</Style>
 		<Style Selector="Button.Exit:pointerover /template/ ContentPresenter">
 			<Setter Property="Background" Value="#E81123" />
 		</Style>
