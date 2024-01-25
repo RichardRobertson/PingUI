@@ -6,10 +6,11 @@
 		<Nullable>enable</Nullable>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-		<PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
-		<SelfContained Condition="'$(Configuration)' == 'Release'">true</SelfContained>
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
-		<PublishTrimmed Condition="'$(Configuration)' == 'Release'">true</PublishTrimmed>
+		<PublishAot>true</PublishAot>
+		<DebugSymbols Condition="'$(Configuration)' == 'Release'">False</DebugSymbols>
+		<DebugType Condition="'$(Configuration)' == 'Release'">None</DebugType>
+		<NativeDebugSymbols>false</NativeDebugSymbols>
 		<Company></Company>
 		<Authors>Richard Robertson</Authors>
 		<Copyright>(c) Richard Robertson 2023</Copyright>
@@ -33,7 +34,12 @@
 		</JsonResource>
 	</ItemGroup>
 
-	<Target Name="BuildInstaller" AfterTargets="Publish" Condition="'$(Configuration)' == 'Release'">
+	<Target Name="CleanPublish" BeforeTargets="PrepareForPublish">
+		<Message Text="Deleting $(ProjectDir)$(PublishDir)" Importance="High" />
+		<RemoveDir Directories="$(ProjectDir)$(PublishDir)" />
+	</Target>
+
+	<Target Name="BuildInstaller" AfterTargets="CopyNativeBinary">
 		<Message Text="Zip publish contents and build MSI file" Importance="High" />
 		<Exec
 			Command="pwsh $(SolutionDir)build-package.ps1 -ProjectDir &quot;$(ProjectDir.TrimEnd('\'))&quot; -PublishDir &quot;$(PublishDir.TrimEnd('\'))&quot; -SolutionDir &quot;$(SolutionDir.TrimEnd('\'))&quot; -AssemblyName &quot;$(AssemblyName)&quot; -Product &quot;$(Product)&quot; -RuntimeIdentifier &quot;$(RuntimeIdentifier)&quot; -Version &quot;$(Version)&quot;" />
