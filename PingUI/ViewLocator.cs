@@ -18,6 +18,7 @@ public class ViewLocator : IDataTemplate
 			PingResultViewModel => new PingResultView(),
 			AskToEnableUpdateCheckViewModel => new AskToEnableUpdateCheckView(),
 			UpdateNotificationViewModel => new UpdateNotificationView(),
+			SettingsViewModel => new SettingsView(),
 			_ => new TextBlock() { Text = "Not Found: " + data.GetType().FullName },
 		};
 	}

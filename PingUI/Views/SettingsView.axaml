@@ -1,0 +1,17 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vm="using:PingUI.ViewModels"
+	xmlns:v="using:PingUI.Views"
+	xmlns:i18n="using:PingUI.I18N"
+	x:Class="PingUI.Views.SettingsView"
+	x:DataType="vm:SettingsViewModel">
+	<StackPanel>
+		<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="4">
+			<Button>
+				<Path Stroke="White" StrokeThickness="1" Data="M 0 0 L 10 10 M 0 10 L 10 0" />
+			</Button>
+		</StackPanel>
+		<CheckBox Content="{x:Static i18n:Strings.SettingsView_CheckOnlineForUpdates}"
+			IsChecked="{Binding CheckOnlineForUpdates}" Margin="4" />
+	</StackPanel>
+</UserControl>

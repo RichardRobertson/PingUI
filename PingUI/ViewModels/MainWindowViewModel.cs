@@ -77,6 +77,10 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 				})
 				.Subscribe();
 		});
+		ShowSettingsCommand = ReactiveCommand.Create(() =>
+		{
+			DialogHost.Show(new SettingsViewModel());
+		});
 	}
 
 	/// <summary>
@@ -128,6 +132,14 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 	/// A command to add a new target.
 	/// </summary>
 	public ReactiveCommand<Unit, Unit> AddTargetCommand
+	{
+		get;
+	}
+
+	/// <summary>
+	/// A command to show the settings dialog.
+	/// </summary>
+	public ReactiveCommand<Unit, Unit> ShowSettingsCommand
 	{
 		get;
 	}
