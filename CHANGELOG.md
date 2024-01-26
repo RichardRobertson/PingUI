@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Set focus to textbox in edit target dialog ([11](https://github.com/RichardRobertson/PingUI/Issues/11))
+
 ### Fixed
 
 - Localize ping results ([#10](https://github.com/RichardRobertson/PingUI/issues/10))
