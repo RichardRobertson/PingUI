@@ -5,16 +5,16 @@
 	xmlns:md="clr-namespace:Markdown.Avalonia;assembly=Markdown.Avalonia"
 	x:Class="PingUI.Views.UpdateNotificationView"
 	x:DataType="vm:UpdateNotificationViewModel">
-	<StackPanel>
+	<Grid RowDefinitions="Auto * Auto">
 		<TextBlock Text="{x:Static i18n:Strings.UpdateNotificationView_Header}"
 			Margin="8" FontSize="24" HorizontalAlignment="Center" />
-		<md:MarkdownScrollViewer Markdown="{Binding ReleaseBodyMarkdown}" />
-		<StackPanel Orientation="Horizontal" Margin="8" HorizontalAlignment="Right">
+		<md:MarkdownScrollViewer Grid.Row="1" Markdown="{Binding ReleaseBodyMarkdown}" />
+		<StackPanel Grid.Row="2" Orientation="Horizontal" Margin="8" HorizontalAlignment="Right">
 			<Button Content="{x:Static i18n:Strings.Dialog_Dismiss}"
 				Command="{Binding DismissDialogCommand}" Margin="4" />
 			<Button Content="{x:Static i18n:Strings.Dialog_Go}"
 				Command="{Binding OpenReleaseWebpageCommand}" Margin="4"
 				Background="DarkGreen" />
 		</StackPanel>
-	</StackPanel>
+	</Grid>
 </UserControl>
