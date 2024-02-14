@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Settings panel
 	- Checkbox to check online for updates ([12](https://github.com/RichardRobertson/PingUI/Issues/12))
+	- Checkbox to remember window location
+
+- Ability to restore window location across program launches
 
 ## [1.3.0] - 2024-01-26
 

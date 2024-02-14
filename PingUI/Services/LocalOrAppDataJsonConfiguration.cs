@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using PingUI.Extensions;
 using PingUI.I18N;
+using PingUI.Interop;
 using PingUI.Models;
 using PingUI.ServiceModels;
 using Splat;
@@ -61,6 +62,13 @@ public class LocalOrAppDataJsonConfiguration : IConfiguration
 
 	/// <inheritdoc />
 	public bool? CheckOnlineForUpdates
+	{
+		get;
+		set;
+	}
+
+	/// <inheritdoc />
+	public WindowPlacement.WindowPlacementRecord? WindowBounds
 	{
 		get;
 		set;

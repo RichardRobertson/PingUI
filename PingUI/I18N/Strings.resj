@@ -76,6 +76,7 @@
 		"Shared_Error_DuplicateTarget": "Target already exists: {0}",
 		// SettingsView
 		"SettingsView_CheckOnlineForUpdates": "Check online for updates?",
+		"SettingsView_RememberWindowLocation": "Remember window location?",
 		// System.Net.NetworkInformation.IPStatus enum
 		"System_Net_NetworkInformation_IPStatus_Success": "Success",
 		"System_Net_NetworkInformation_IPStatus_DestinationNetworkUnreachable": "Destination Network Unreachable",

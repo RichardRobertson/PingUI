@@ -13,5 +13,7 @@
 		</StackPanel>
 		<CheckBox Content="{x:Static i18n:Strings.SettingsView_CheckOnlineForUpdates}"
 			IsChecked="{Binding CheckOnlineForUpdates}" Margin="4" />
+		<CheckBox Content="{x:Static i18n:Strings.SettingsView_RememberWindowLocation}"
+			IsChecked="{Binding RememberWindowLocation}" Margin="4" />
 	</StackPanel>
 </UserControl>

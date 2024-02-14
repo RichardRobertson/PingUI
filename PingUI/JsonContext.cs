@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using PingUI.Interop;
 using PingUI.Models;
 using PingUI.Services;
 
@@ -10,6 +11,9 @@ namespace PingUI;
 /// </summary>
 [JsonSerializable(typeof(LocalOrAppDataJsonConfiguration))]
 [JsonSerializable(typeof(GitHubRelease))]
+[JsonSerializable(typeof(WindowPlacement.WindowPlacementRecord))]
+[JsonSerializable(typeof(Point.PointRecord))]
+[JsonSerializable(typeof(Rect.RectRecord))]
 internal partial class JsonContext : JsonSerializerContext
 {
 	/// <summary>

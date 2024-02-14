@@ -31,6 +31,20 @@ public class SettingsViewModel : ViewModelBase
 		}
 	}
 
+	public bool RememberWindowLocation
+	{
+		get => configuration.WindowBounds is not null;
+		set
+		{
+			if (value != (configuration.WindowBounds is not null))
+			{
+				this.RaisePropertyChanging();
+				configuration.WindowBounds = value ? new WindowPlacement() : null;
+				this.RaisePropertyChanged();
+			}
+		}
+	}
+
 	public ReactiveCommand<Unit, Unit> DismissDialogCommand
 	{
 		get;
