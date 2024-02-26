@@ -64,7 +64,7 @@
 						MaterialOpacity="0.65" />
 				</ExperimentalAcrylicBorder.Material>
 			</ExperimentalAcrylicBorder>
-			<StackPanel>
+			<Grid RowDefinitions="Auto *">
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 					<Button Command="{Binding ShowSettingsCommand}" Classes="Chrome">
 						<ic:SymbolIcon Symbol="Settings" />
@@ -77,10 +77,10 @@
 						<Path Stroke="White" StrokeThickness="1" Data="M 0 0 L 10 10 M 0 10 L 10 0" />
 					</Button>
 				</StackPanel>
-				<ScrollViewer>
+				<ScrollViewer Grid.Row="1">
 					<ItemsControl ItemsSource="{Binding Targets}" />
 				</ScrollViewer>
-			</StackPanel>
+			</Grid>
 			<Button Classes="fab" ToolTip.Tip="{x:Static i18n:Strings.MainWindow_ToolTip_Add}"
 				Command="{Binding AddTargetCommand}">
 				<ic:SymbolIcon Symbol="Add" />
