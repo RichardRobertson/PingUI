@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [Unreleased]
 
+### Added
+
+- Added dropdown to start/stop all target pings at once ([#15](https://github.com/RichardRobertson/PingUI/issues/15))
+
 ### Fixed
 
 - Fixed scrollbar on main view ([#13](https://github.com/RichardRobertson/PingUI/issues/13))

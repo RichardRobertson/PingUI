@@ -81,6 +81,26 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 		{
 			DialogHost.Show(new SettingsViewModel());
 		});
+		StartPingingAllCommand = ReactiveCommand.Create(() =>
+		{
+			if (_Targets is { } targets)
+			{
+				foreach (var target in targets)
+				{
+					target.IsEnabled = true;
+				}
+			}
+		});
+		StopPingingAllCommand = ReactiveCommand.Create(() =>
+		{
+			if (_Targets is { } targets)
+			{
+				foreach (var target in targets)
+				{
+					target.IsEnabled = false;
+				}
+			}
+		});
 	}
 
 	/// <summary>
@@ -140,6 +160,22 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 	/// A command to show the settings dialog.
 	/// </summary>
 	public ReactiveCommand<Unit, Unit> ShowSettingsCommand
+	{
+		get;
+	}
+
+	/// <summary>
+	/// A command to start pinging all targets.
+	/// </summary>
+	public ReactiveCommand<Unit, Unit> StartPingingAllCommand
+	{
+		get;
+	}
+
+	/// <summary>
+	/// A command to stop pinging all targets.
+	/// </summary>
+	public ReactiveCommand<Unit, Unit> StopPingingAllCommand
 	{
 		get;
 	}
