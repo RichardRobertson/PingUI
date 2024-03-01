@@ -3,6 +3,7 @@
 	xmlns:vm="using:PingUI.ViewModels"
 	xmlns:v="using:PingUI.Views"
 	xmlns:i18n="using:PingUI.I18N"
+	xmlns:behaviors="using:PingUI.Behaviors"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:ic="using:FluentIcons.Avalonia.Fluent"
 	xmlns:dialogHost="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
@@ -53,57 +54,113 @@
 		</Style>
 	</Window.Styles>
 	<dialogHost:DialogHost CloseOnClickAway="True">
-		<Panel>
-			<ExperimentalAcrylicBorder IsHitTestVisible="False">
-				<ExperimentalAcrylicBorder.Material>
-					<ExperimentalAcrylicMaterial
-						BackgroundSource="Digger"
-						TintColor="Black"
-						TintOpacity="1"
-						FallbackColor="#333333"
-						MaterialOpacity="0.65" />
-				</ExperimentalAcrylicBorder.Material>
-			</ExperimentalAcrylicBorder>
-			<Grid RowDefinitions="Auto *">
-				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-					<Button Command="{Binding ShowSettingsCommand}" Classes="Chrome">
-						<ic:SymbolIcon Symbol="Settings" />
-					</Button>
-					<Button Classes="Chrome">
-						<Button.Flyout>
-							<MenuFlyout>
-								<MenuItem Header="{x:Static i18n:Strings.MainWindow_Menu_PlayAll}"
-									Command="{Binding StartPingingAllCommand}">
-									<MenuItem.Icon>
-										<ic:SymbolIcon Symbol="Play" FontSize="16" />
-									</MenuItem.Icon>
-								</MenuItem>
-								<MenuItem Header="{x:Static i18n:Strings.MainWindow_Menu_PauseAll}"
-									Command="{Binding StopPingingAllCommand}">
-									<MenuItem.Icon>
-										<ic:SymbolIcon Symbol="Pause" FontSize="16" />
-									</MenuItem.Icon>
-								</MenuItem>
-							</MenuFlyout>
-						</Button.Flyout>
-						<ic:SymbolIcon Symbol="VideoPlayPause" />
-					</Button>
-					<ToggleButton Classes="Chrome Pin"
-						IsChecked="{Binding Topmost}">
-						<ic:SymbolIcon Symbol="Pin" />
-					</ToggleButton>
-					<Button Click="CloseWindowButton_Click" Classes="Chrome Exit">
-						<Path Stroke="White" StrokeThickness="1" Data="M 0 0 L 10 10 M 0 10 L 10 0" />
-					</Button>
-				</StackPanel>
-				<ScrollViewer Grid.Row="1">
-					<ItemsControl ItemsSource="{Binding Targets}" />
-				</ScrollViewer>
-			</Grid>
-			<Button Classes="fab" ToolTip.Tip="{x:Static i18n:Strings.MainWindow_ToolTip_Add}"
-				Command="{Binding AddTargetCommand}">
-				<ic:SymbolIcon Symbol="Add" />
-			</Button>
-		</Panel>
+		<SplitView x:Name="MenuPane">
+			<SplitView.Pane>
+				<Grid RowDefinitions="Auto *">
+					<DockPanel LastChildFill="False">
+						<ToggleButton Classes="Chrome"
+							IsChecked="{Binding #MenuPane.IsPaneOpen}" DockPanel.Dock="Left">
+							<ic:SymbolIcon Symbol="ArrowLeft" />
+						</ToggleButton>
+					</DockPanel>
+					<ScrollViewer Grid.Row="1" Margin="8">
+						<StackPanel Grid.IsSharedSizeScope="True">
+							<StackPanel.Styles>
+								<Style Selector="Button">
+									<Setter Property="HorizontalAlignment" Value="Stretch" />
+									<Setter Property="Padding"
+										Value="{DynamicResource MenuFlyoutItemThemePaddingNarrow}" />
+									<Setter Property="Background"
+										Value="{DynamicResource MenuFlyoutItemBackground}" />
+									<Setter Property="Foreground"
+										Value="{DynamicResource MenuFlyoutItemForeground}" />
+									<Setter Property="behaviors:DismissSplitViewOnClick.SplitView"
+										Value="{Binding #MenuPane}" />
+								</Style>
+								<Style Selector="Button ic|SymbolIcon">
+									<Setter Property="Margin" Value="8 8 12 8" />
+									<Setter Property="VerticalAlignment" Value="Center" />
+								</Style>
+								<Style Selector="Button TextBlock">
+									<Setter Property="VerticalAlignment" Value="Center" />
+									<Setter Property="(Grid.Column)" Value="1" />
+								</Style>
+							</StackPanel.Styles>
+							<Button Command="{Binding ShowSettingsCommand}">
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="Auto" SharedSizeGroup="Icon" />
+										<ColumnDefinition />
+									</Grid.ColumnDefinitions>
+									<ic:SymbolIcon Symbol="Settings" />
+									<TextBlock
+										Text="{x:Static i18n:Strings.MainWindow_Menu_Settings}" />
+								</Grid>
+							</Button>
+							<Separator />
+							<Button Command="{Binding StartPingingAllCommand}">
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="Auto" SharedSizeGroup="Icon" />
+										<ColumnDefinition />
+									</Grid.ColumnDefinitions>
+									<ic:SymbolIcon Symbol="Play" />
+									<TextBlock
+										Text="{x:Static i18n:Strings.MainWindow_Menu_PlayAll}" />
+								</Grid>
+							</Button>
+							<Button Command="{Binding StopPingingAllCommand}">
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="Auto" SharedSizeGroup="Icon" />
+										<ColumnDefinition />
+									</Grid.ColumnDefinitions>
+									<ic:SymbolIcon Symbol="Pause" />
+									<TextBlock
+										Text="{x:Static i18n:Strings.MainWindow_Menu_PauseAll}" />
+								</Grid>
+							</Button>
+						</StackPanel>
+					</ScrollViewer>
+				</Grid>
+			</SplitView.Pane>
+			<Panel>
+				<ExperimentalAcrylicBorder IsHitTestVisible="False">
+					<ExperimentalAcrylicBorder.Material>
+						<ExperimentalAcrylicMaterial
+							BackgroundSource="Digger"
+							TintColor="Black"
+							TintOpacity="1"
+							FallbackColor="#333333"
+							MaterialOpacity="0.65" />
+					</ExperimentalAcrylicBorder.Material>
+				</ExperimentalAcrylicBorder>
+				<Grid RowDefinitions="Auto *">
+					<DockPanel LastChildFill="False">
+						<ToggleButton Classes="Chrome"
+							IsChecked="{Binding #MenuPane.IsPaneOpen}"
+							DockPanel.Dock="Left">
+							<ic:SymbolIcon Symbol="Navigation" />
+						</ToggleButton>
+						<Button Click="CloseWindowButton_Click" Classes="Chrome Exit"
+							DockPanel.Dock="Right">
+							<Path Stroke="White" StrokeThickness="1"
+								Data="M 0 0 L 10 10 M 0 10 L 10 0" />
+						</Button>
+						<ToggleButton Classes="Chrome Pin"
+							IsChecked="{Binding Topmost}" DockPanel.Dock="Right">
+							<ic:SymbolIcon Symbol="Pin" />
+						</ToggleButton>
+					</DockPanel>
+					<ScrollViewer Grid.Row="1">
+						<ItemsRepeater ItemsSource="{Binding Targets}" />
+					</ScrollViewer>
+				</Grid>
+				<Button Classes="fab" ToolTip.Tip="{x:Static i18n:Strings.MainWindow_ToolTip_Add}"
+					Command="{Binding AddTargetCommand}">
+					<ic:SymbolIcon Symbol="Add" />
+				</Button>
+			</Panel>
+		</SplitView>
 	</dialogHost:DialogHost>
 </Window>

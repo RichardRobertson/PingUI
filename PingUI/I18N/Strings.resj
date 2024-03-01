@@ -60,6 +60,7 @@
 		"MainWindow_Error_CheckForUpdatesAsync": "Error occurred while checking for updates online.",
 		"MainWindow_Menu_PlayAll": "Start pinging all",
 		"MainWindow_Menu_PauseAll": "Stop pinging all",
+		"MainWindow_Menu_Settings": "Settings",
 		// DialogErrorReporterView
 		"DialogErrorReporterView_Title": "Error Report",
 		"DialogErrorReporterView_Copy": "Copy to clipboard",
