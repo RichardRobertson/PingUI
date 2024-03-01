@@ -20,7 +20,12 @@ public class FakeTogglePinger(int repeats = 1) : IPinger
 	/// <summary>
 	/// Counts how many times a status has been reported.
 	/// </summary>
-	private int _Count;
+	private volatile int _Count;
+
+	/// <summary>
+	/// Lock marker for <see cref="_Count" />.
+	/// </summary>
+	private readonly object _CountLock = new();
 
 	/// <summary>
 	/// Gets a value indicating how many times to repeat a state before toggling.
@@ -58,11 +63,14 @@ public class FakeTogglePinger(int repeats = 1) : IPinger
 			{
 				observer.OnNext(new PingResult(status, DateTime.Now));
 				await Task.Delay(target.CoolDown, cancellationToken).ConfigureAwait(false);
-				_Count++;
-				if (_Count == Repeats)
+				lock (_CountLock)
 				{
-					status = status == IPStatus.Success ? IPStatus.TimedOut : IPStatus.Success;
-					_Count = 0;
+					_Count++;
+					if (_Count == Repeats)
+					{
+						status = status == IPStatus.Success ? IPStatus.TimedOut : IPStatus.Success;
+						_Count = 0;
+					}
 				}
 			}
 		}
