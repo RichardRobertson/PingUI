@@ -2,6 +2,8 @@
 	"Strings": {
 		// DeleteTargetView
 		"DeleteTargetView_Header": "Confirm Delete?",
+		// DeleteAllTargetsView
+		"DeleteAllTargetsView_Body": "Are you sure you want to delete all targets? This is not reversible.",
 		// EditTargetView
 		"EditTargetView_Header": "Edit Target",
 		"EditTargetView_Header_New": "Add Target",
@@ -61,6 +63,7 @@
 		"MainWindow_Menu_PlayAll": "Start pinging all",
 		"MainWindow_Menu_PauseAll": "Stop pinging all",
 		"MainWindow_Menu_Settings": "Settings",
+		"MainWindow_Menu_DeleteAll": "Delete all targets",
 		"MainWindow_Menu_DetailsView": "Details view",
 		"MainWindow_Menu_CondensedView": "Condensed view",
 		// DialogErrorReporterView

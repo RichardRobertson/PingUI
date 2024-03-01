@@ -143,6 +143,18 @@
 										Text="{x:Static i18n:Strings.MainWindow_Menu_CondensedView}" />
 								</Grid>
 							</Button>
+							<Separator />
+							<Button Command="{Binding DeleteAllTargetsCommand}" Background="DarkRed">
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="Auto" SharedSizeGroup="Icon" />
+										<ColumnDefinition />
+									</Grid.ColumnDefinitions>
+									<ic:SymbolIcon Symbol="Delete" />
+									<TextBlock
+										Text="{x:Static i18n:Strings.MainWindow_Menu_DeleteAll}" />
+								</Grid>
+							</Button>
 						</StackPanel>
 					</ScrollViewer>
 				</Grid>

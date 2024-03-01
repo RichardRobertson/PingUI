@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New menu drawer to remove clutter from window controls area
 - New condensed view available in the menu drawer ([#14](https://github.com/RichardRobertson/PingUI/issues/14))
 	- Includes details view option to return to the original appearance
+- Delete all targets button added to menu drawer ([#16](https://github.com/RichardRobertson/PingUI/issues/16))
 
 ### Changed
 

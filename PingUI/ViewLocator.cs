@@ -19,6 +19,7 @@ public class ViewLocator : IDataTemplate
 			AskToEnableUpdateCheckViewModel => new AskToEnableUpdateCheckView(),
 			UpdateNotificationViewModel => new UpdateNotificationView(),
 			SettingsViewModel => new SettingsView(),
+			DeleteAllTargetsViewModel => new DeleteAllTargetsView(),
 			_ => new TextBlock() { Text = "Not Found: " + data.GetType().FullName },
 		};
 	}

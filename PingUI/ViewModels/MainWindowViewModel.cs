@@ -95,6 +95,7 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 		{
 			DialogHost.Show(new EditTargetViewModel(null))
 				.ToObservable()
+				.ObserveOn(RxApp.MainThreadScheduler)
 				.Do(result =>
 				{
 					if (result is Target target)
@@ -109,6 +110,26 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 				})
 				.Subscribe();
 		});
+		DeleteAllTargetsCommand = ReactiveCommand.Create(
+			() =>
+			{
+				DialogHost.Show(new DeleteAllTargetsViewModel())
+					.ToObservable()
+					.ObserveOn(RxApp.MainThreadScheduler)
+					.Do(result =>
+					{
+						if (result as bool? == true && _Targets is { } targets)
+						{
+							foreach (var target in targets)
+							{
+								target.IsEnabled = false;
+							}
+							configuration.Targets.Clear();
+						}
+					})
+					.Subscribe();
+			},
+			configuration.Targets.WhenAnyValue(targets => targets.Count).Select(count => count != 0));
 		ShowSettingsCommand = ReactiveCommand.Create(() =>
 		{
 			DialogHost.Show(new SettingsViewModel());
@@ -227,6 +248,14 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 	/// Change the view to icons.
 	/// </summary>
 	public ReactiveCommand<Unit, Unit> SetCondensedViewCommand
+	{
+		get;
+	}
+
+	/// <summary>
+	/// Delete all targets at once.
+	/// </summary>
+	public ReactiveCommand<Unit, Unit> DeleteAllTargetsCommand
 	{
 		get;
 	}
