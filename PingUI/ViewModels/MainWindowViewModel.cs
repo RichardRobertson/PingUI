@@ -1,6 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
+using System.ComponentModel;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Reactive;
@@ -8,10 +8,9 @@ using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using DialogHostAvalonia;
+using DynamicData.Binding;
 using PingUI.Collections;
 using PingUI.Extensions;
 using PingUI.I18N;
@@ -43,6 +42,21 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 	private ReadOnlyObservableMappedCollection<Target, ObservableCollection<Target>, TargetViewModel>? _Targets;
 
 	/// <summary>
+	/// Backing store for <see cref="ViewStyle" />.
+	/// </summary>
+	private MainViewStyle _ViewStyle;
+
+	/// <summary>
+	/// Backing store for <see cref="IsDetailsView" />.
+	/// </summary>
+	private bool _IsDetailsView;
+
+	/// <summary>
+	/// Backing store for <see cref="IsCondensedView" />.
+	/// </summary>
+	private bool _IsCondensedView;
+
+	/// <summary>
 	/// Initializes a new <see cref="MainWindowViewModel" />.
 	/// </summary>
 	public MainWindowViewModel()
@@ -58,6 +72,24 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 			Targets.DisposeWith(disposables);
 			Disposable.Create(() => Targets = null).DisposeWith(disposables);
 			Observable.FromAsync(CheckForUpdatesAsync).Subscribe().DisposeWith(disposables);
+			this.WhenValueChanged(vm => vm.ViewStyle)
+				.Subscribe(viewStyle =>
+				{
+					switch (viewStyle)
+					{
+						case MainViewStyle.Details:
+							IsCondensedView = false;
+							IsDetailsView = true;
+							break;
+						case MainViewStyle.Condensed:
+							IsDetailsView = false;
+							IsCondensedView = true;
+							break;
+						default:
+							throw new InvalidEnumArgumentException(nameof(ViewStyle), (int)viewStyle, typeof(MainViewStyle));
+					}
+				})
+				.DisposeWith(disposables);
 		});
 		AddTargetCommand = ReactiveCommand.Create(() =>
 		{
@@ -101,6 +133,9 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 				}
 			}
 		});
+		_ViewStyle = MainViewStyle.Details;
+		SetDetailsViewCommand = ReactiveCommand.Create(() => { ViewStyle = MainViewStyle.Details; });
+		SetCondensedViewCommand = ReactiveCommand.Create(() => { ViewStyle = MainViewStyle.Condensed; });
 	}
 
 	/// <summary>
@@ -181,6 +216,22 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 	}
 
 	/// <summary>
+	/// Change the view to details.
+	/// </summary>
+	public ReactiveCommand<Unit, Unit> SetDetailsViewCommand
+	{
+		get;
+	}
+
+	/// <summary>
+	/// Change the view to icons.
+	/// </summary>
+	public ReactiveCommand<Unit, Unit> SetCondensedViewCommand
+	{
+		get;
+	}
+
+	/// <summary>
 	/// Indicates whether the main window should display on top of other windows at all times.
 	/// </summary>
 	public bool Topmost
@@ -195,6 +246,33 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 				this.RaisePropertyChanged();
 			}
 		}
+	}
+
+	/// <summary>
+	/// Indicate how to display the list of targets.
+	/// </summary>
+	public MainViewStyle ViewStyle
+	{
+		get => _ViewStyle;
+		set => this.RaiseAndSetIfChanged(ref _ViewStyle, value);
+	}
+
+	/// <summary>
+	/// Indicates when the target view style should be details.
+	/// </summary>
+	public bool IsDetailsView
+	{
+		get => _IsDetailsView;
+		private set => this.RaiseAndSetIfChanged(ref _IsDetailsView, value);
+	}
+
+	/// <summary>
+	/// Indicates when the target view style should be icons.
+	/// </summary>
+	public bool IsCondensedView
+	{
+		get => _IsCondensedView;
+		private set => this.RaiseAndSetIfChanged(ref _IsCondensedView, value);
 	}
 
 	/// <inheritdoc />

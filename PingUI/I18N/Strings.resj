@@ -61,6 +61,8 @@
 		"MainWindow_Menu_PlayAll": "Start pinging all",
 		"MainWindow_Menu_PauseAll": "Stop pinging all",
 		"MainWindow_Menu_Settings": "Settings",
+		"MainWindow_Menu_DetailsView": "Details view",
+		"MainWindow_Menu_CondensedView": "Condensed view",
 		// DialogErrorReporterView
 		"DialogErrorReporterView_Title": "Error Report",
 		"DialogErrorReporterView_Copy": "Copy to clipboard",

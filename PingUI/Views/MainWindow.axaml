@@ -120,6 +120,29 @@
 										Text="{x:Static i18n:Strings.MainWindow_Menu_PauseAll}" />
 								</Grid>
 							</Button>
+							<Separator />
+							<Button Command="{Binding SetDetailsViewCommand}">
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="Auto" SharedSizeGroup="Icon" />
+										<ColumnDefinition />
+									</Grid.ColumnDefinitions>
+									<ic:SymbolIcon Symbol="AppsListDetail" />
+									<TextBlock
+										Text="{x:Static i18n:Strings.MainWindow_Menu_DetailsView}" />
+								</Grid>
+							</Button>
+							<Button Command="{Binding SetCondensedViewCommand}">
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="Auto" SharedSizeGroup="Icon" />
+										<ColumnDefinition />
+									</Grid.ColumnDefinitions>
+									<ic:SymbolIcon Symbol="Grid" />
+									<TextBlock
+										Text="{x:Static i18n:Strings.MainWindow_Menu_CondensedView}" />
+								</Grid>
+							</Button>
 						</StackPanel>
 					</ScrollViewer>
 				</Grid>
@@ -153,7 +176,61 @@
 						</ToggleButton>
 					</DockPanel>
 					<ScrollViewer Grid.Row="1">
-						<ItemsRepeater ItemsSource="{Binding Targets}" />
+						<ScrollViewer.Styles>
+							<Style Selector="Button.Unknown">
+								<Setter Property="Background" Value="#333333" />
+							</Style>
+							<Style Selector="Button.Success">
+								<Setter Property="Background" Value="#68885C" />
+							</Style>
+							<Style Selector="Button.Failure">
+								<Setter Property="Background" Value="#9C2B2E" />
+							</Style>
+							<Style Selector="ItemsRepeater.Details">
+								<Setter Property="ItemTemplate">
+									<Setter.Value>
+										<DataTemplate DataType="vm:TargetViewModel">
+											<v:TargetView />
+										</DataTemplate>
+									</Setter.Value>
+								</Setter>
+							</Style>
+							<Style Selector="ItemsRepeater.Condensed">
+								<Setter Property="ItemTemplate">
+									<Setter.Value>
+										<DataTemplate DataType="vm:TargetViewModel">
+											<Button BorderBrush="#33ffffff" BorderThickness="1"
+												CornerRadius="4" Margin="8"
+												Classes.Unknown="{Binding IsUnknown}"
+												Classes.Failure="{Binding IsFailure}"
+												Classes.Success="{Binding IsSuccess}">
+												<Button.Flyout>
+													<Flyout>
+														<ScrollViewer MaxHeight="100">
+															<ItemsControl
+																ItemsSource="{Binding Transitions}"
+																Grid.IsSharedSizeScope="True" />
+														</ScrollViewer>
+													</Flyout>
+												</Button.Flyout>
+												<StackPanel Margin="8">
+													<TextBlock Text="{Binding Address}" />
+													<TextBlock Text="{Binding Label}" />
+												</StackPanel>
+											</Button>
+										</DataTemplate>
+									</Setter.Value>
+								</Setter>
+								<Setter Property="Layout">
+									<Setter.Value>
+										<WrapLayout />
+									</Setter.Value>
+								</Setter>
+							</Style>
+						</ScrollViewer.Styles>
+						<ItemsRepeater ItemsSource="{Binding Targets}"
+							Classes.Details="{Binding IsDetailsView}"
+							Classes.Condensed="{Binding IsCondensedView}" />
 					</ScrollViewer>
 				</Grid>
 				<Button Classes="fab" ToolTip.Tip="{x:Static i18n:Strings.MainWindow_ToolTip_Add}"
