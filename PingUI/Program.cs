@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 
 namespace PingUI;
 
+/// <summary>
+/// Main entry point.
+/// </summary>
 public static class Program
 {
 	// Initialization code. Don't use any Avalonia, third-party APIs or any

@@ -15,42 +15,85 @@ using Splat;
 
 namespace PingUI.Behaviors;
 
+/// <summary>
+/// Behavior to allow dragging items in an <see cref="ItemsControl" /> to reorder them.
+/// </summary>
 public class DragArrangeBehavior : Behavior
 {
+	/// <summary>
+	/// Defines the <see cref="ScrollEdgeDistance" /> property.
+	/// </summary>
 	public static readonly StyledProperty<double> ScrollEdgeDistanceProperty = AvaloniaProperty.Register<DragArrangeBehavior, double>(nameof(ScrollEdgeDistance), 50.0);
 
+	/// <summary>
+	/// Defines the <see cref="HighSpeedScrollMultiplier" /> property.
+	/// </summary>
 	public static readonly StyledProperty<double> HighSpeedScrollMultiplierProperty = AvaloniaProperty.Register<DragArrangeBehavior, double>(nameof(HighSpeedScrollMultiplier), 4.0);
 
+	/// <summary>
+	/// Indicates that a drag may occur.
+	/// </summary>
 	private bool _enableDrag;
 
-	private SerialDisposable _dragStarted = new();
+	/// <summary>
+	/// Indicates if a drag is currently running by optionally containing a disposable that handles scrolling.
+	/// </summary>
+	private readonly SerialDisposable _dragStarted = new();
 
+	/// <summary>
+	/// Indicates the point that a drag started at.
+	/// </summary>
 	private Point _start;
 
+	/// <summary>
+	/// Indicates the index of the item being dragged.
+	/// </summary>
 	private int _draggedIndex;
 
+	/// <summary>
+	/// Indicates the index that the dragged item will land on if released.
+	/// </summary>
 	private int _targetIndex;
 
+	/// <summary>
+	/// <see cref="ItemsControl" /> that is the parent of the dragged item.
+	/// </summary>
 	private ItemsControl? _itemsControl;
 
+	/// <summary>
+	/// The dragged item's container.
+	/// </summary>
 	private Control? _draggedContainer;
 
+	/// <summary>
+	/// Indicates if the pointer is captured.
+	/// </summary>
 	private bool _captured;
 
+	/// <summary>
+	/// Indicates the position of the pointer relative to a parent <see cref="ScrollViewer" />.
+	/// </summary>
 	private double _relativeToScrollViewer;
 
+	/// <summary>
+	/// Gets or sets a value indicating how close in pixels the pointer must be to the top or bottom of a parent <see cref="ScrollViewer" /> to begin scrolling.
+	/// </summary>
 	public double ScrollEdgeDistance
 	{
 		get => GetValue(ScrollEdgeDistanceProperty);
 		set => SetValue(ScrollEdgeDistanceProperty, value);
 	}
 
+	/// <summary>
+	/// Gets or sets a value indicating the speed multiplier when the pointer exceeds the top or bottom bounds of a parent <see cref="ScrollViewer" /> when scrolling.
+	/// </summary>
 	public double HighSpeedScrollMultiplier
 	{
 		get => GetValue(HighSpeedScrollMultiplierProperty);
 		set => SetValue(HighSpeedScrollMultiplierProperty, value);
 	}
 
+	/// <inheritdoc />
 	protected override void OnAttached()
 	{
 		if (AssociatedObject is Control associatedObject)
@@ -62,6 +105,7 @@ public class DragArrangeBehavior : Behavior
 		}
 	}
 
+	/// <inheritdoc />
 	protected override void OnDetaching()
 	{
 		if (AssociatedObject is Control associatedObject)
@@ -73,6 +117,11 @@ public class DragArrangeBehavior : Behavior
 		}
 	}
 
+	/// <summary>
+	/// Occurs when the pointer is pressed over the control.
+	/// </summary>
+	/// <param name="sender">The source of the event.</param>
+	/// <param name="e">The details of the event.</param>
 	private void PointerPressed(object? sender, PointerPressedEventArgs e)
 	{
 		var properties = e.GetCurrentPoint(AssociatedObject as Control).Properties;
@@ -89,11 +138,16 @@ public class DragArrangeBehavior : Behavior
 			{
 				SetDraggingPseudoClasses(_draggedContainer, true);
 			}
-			AddTransforms(_itemsControl);
+			ResetTransforms(_itemsControl);
 			_captured = true;
 		}
 	}
 
+	/// <summary>
+	/// Occurs when the pointer is released over the control.
+	/// </summary>
+	/// <param name="sender">The source of the event.</param>
+	/// <param name="e">The details of the event.</param>
 	private void PointerReleased(object? sender, PointerReleasedEventArgs e)
 	{
 		if (_captured)
@@ -106,19 +160,29 @@ public class DragArrangeBehavior : Behavior
 		}
 	}
 
+	/// <summary>
+	/// Occurs when the control or its child control loses the pointer capture for any
+	/// reason, event will not be triggered for a parent control if capture was transferred
+	/// to another child of that parent control
+	/// </summary>
+	/// <param name="sender">The source of hte event.</param>
+	/// <param name="e">The details of the event.</param>
 	private void PointerCaptureLost(object? sender, PointerCaptureLostEventArgs e)
 	{
 		Released();
 		_captured = false;
 	}
 
+	/// <summary>
+	/// Move the dragged item if necessary and clean up.
+	/// </summary>
 	private void Released()
 	{
 		if (!_enableDrag)
 		{
 			return;
 		}
-		RemoveTransforms(_itemsControl);
+		ResetTransforms(_itemsControl);
 		if (_itemsControl is not null)
 		{
 			foreach (var control in _itemsControl.GetRealizedContainers())
@@ -149,7 +213,11 @@ public class DragArrangeBehavior : Behavior
 		_draggedContainer = null;
 	}
 
-	private static void AddTransforms(ItemsControl? itemsControl)
+	/// <summary>
+	/// Resets <see cref="TransformOperations" /> instances on all items in an <see cref="ItemsControl" />.
+	/// </summary>
+	/// <param name="itemsControl">The <see cref="ItemsControl" /> whose contained items to transform.</param>
+	private static void ResetTransforms(ItemsControl? itemsControl)
 	{
 		if (itemsControl?.Items is null)
 		{
@@ -167,24 +235,11 @@ public class DragArrangeBehavior : Behavior
 		}
 	}
 
-	private static void RemoveTransforms(ItemsControl? itemsControl)
-	{
-		if (itemsControl?.Items is null)
-		{
-			return;
-		}
-		var i = 0;
-		foreach (var _ in itemsControl.Items)
-		{
-			var container = itemsControl.ContainerFromIndex(i);
-			if (container is not null)
-			{
-				SetTranslateTransform(container, 0, 0);
-			}
-			i++;
-		}
-	}
-
+	/// <summary>
+	/// Occurs when the pointer moves over the control.
+	/// </summary>
+	/// <param name="sender">The source of the event.</param>
+	/// <param name="e">The details of the event.</param>
 	private void PointerMoved(object? sender, PointerEventArgs e)
 	{
 		var properties = e.GetCurrentPoint(AssociatedObject as Control).Properties;
@@ -244,9 +299,6 @@ public class DragArrangeBehavior : Behavior
 				}
 			}
 			SetTranslateTransform(_draggedContainer, 0, delta);
-			// TODO scroll the view if possible
-			// something like checking position of cursor relative to top or bottom 10 pixels of ScrollViewer and tick up or down continuously until moved out
-			// maybe accelerate scrolling the closer to the bottom?
 			_draggedIndex = _itemsControl.IndexFromContainer(_draggedContainer);
 			_targetIndex = -1;
 			var draggedBounds = _draggedContainer.Bounds;
@@ -285,6 +337,11 @@ public class DragArrangeBehavior : Behavior
 		}
 	}
 
+	/// <summary>
+	/// Toggle the <c>:dragging</c> pseudo class on or off for a given control.
+	/// </summary>
+	/// <param name="control">The <see cref="Control" /> to modify.</param>
+	/// <param name="isDragging"><see langword="true" /> to add <c>:dragging</c> to the control; <see langword="false" /> to remove <c>:dragging</c> from the control.</param>
 	private static void SetDraggingPseudoClasses(Control control, bool isDragging)
 	{
 		if (isDragging)
@@ -297,6 +354,12 @@ public class DragArrangeBehavior : Behavior
 		}
 	}
 
+	/// <summary>
+	/// Sets a <see cref="TransformOperations" /> on a <see cref="Control" /> for a translate transform.
+	/// </summary>
+	/// <param name="control">The <see cref="Control" /> to modify.</param>
+	/// <param name="x">The horizontal offset.</param>
+	/// <param name="y">The vertical offset.</param>
 	private static void SetTranslateTransform(Control control, double x, double y)
 	{
 		var transformBuilder = new TransformOperations.Builder(1);

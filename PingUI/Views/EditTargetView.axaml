@@ -1,7 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:vm="using:PingUI.ViewModels"
-	xmlns:v="using:PingUI.Views"
 	xmlns:i18n="using:PingUI.I18N"
 	x:Class="PingUI.Views.EditTargetView"
 	x:DataType="vm:EditTargetViewModel">

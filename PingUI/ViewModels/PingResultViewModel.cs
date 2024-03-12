@@ -32,6 +32,9 @@ public class PingResultViewModel : ViewModelBase
 		get;
 	}
 
+	/// <summary>
+	/// Gets a localized string for <see cref="Status" />.
+	/// </summary>
 	public string LocalizedStatus
 	{
 		get

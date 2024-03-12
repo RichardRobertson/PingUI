@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using Avalonia;
 using PingUI.Interop;
 using PingUI.Models;
 

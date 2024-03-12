@@ -5,8 +5,12 @@ using PingUI.Views;
 
 namespace PingUI;
 
+/// <summary>
+/// Provides concrete views for given data contexts.
+/// </summary>
 public class ViewLocator : IDataTemplate
 {
+	/// <inheritdoc />
 	public Control Build(object? data)
 	{
 		return data switch
@@ -24,6 +28,7 @@ public class ViewLocator : IDataTemplate
 		};
 	}
 
+	/// <inheritdoc />
 	public bool Match(object? data)
 	{
 		return data is ViewModelBase;
