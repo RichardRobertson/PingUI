@@ -1,6 +1,6 @@
 using System.Reactive.Disposables;
-using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
+using Avalonia;
+using Avalonia.Media;
 using Avalonia.ReactiveUI;
 using DialogHostAvalonia;
 using PingUI.Models;
@@ -11,6 +11,8 @@ namespace PingUI.Views;
 
 public partial class TargetView : ReactiveUserControl<TargetViewModel>
 {
+	public static readonly StyledProperty<BoxShadows> BoxShadowProperty = AvaloniaProperty.Register<TargetView, BoxShadows>(nameof(BoxShadow));
+
 	public TargetView()
 	{
 		InitializeComponent();
@@ -29,5 +31,11 @@ public partial class TargetView : ReactiveUserControl<TargetViewModel>
 					.ContinueWith(result => context.SetOutput(result.Result as Target)))
 				.DisposeWith(disposables);
 		});
+	}
+
+	public BoxShadows BoxShadow
+	{
+		get => GetValue(BoxShadowProperty);
+		set => SetValue(BoxShadowProperty, value);
 	}
 }

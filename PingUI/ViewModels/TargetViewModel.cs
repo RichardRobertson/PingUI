@@ -207,27 +207,6 @@ public sealed class TargetViewModel : ViewModelBase, IDisposable
 			Successes = 0;
 			PingCount = 0;
 		});
-		var configuration = Locator.Current.GetRequiredService<IConfiguration>();
-		MoveUpCommand = ReactiveCommand.Create(
-			() =>
-			{
-				var configuration = Locator.Current.GetRequiredService<IConfiguration>();
-				var index = configuration.Targets.IndexOf(Target);
-				configuration.Targets.Move(index, index - 1);
-			},
-			configuration.Targets
-				.ToObservableChangeSet()
-				.Select(_ => configuration.Targets.IndexOf(Target) != 0));
-		MoveDownCommand = ReactiveCommand.Create(
-			() =>
-			{
-				var configuration = Locator.Current.GetRequiredService<IConfiguration>();
-				var index = configuration.Targets.IndexOf(Target);
-				configuration.Targets.Move(index, index + 1);
-			},
-			configuration.Targets
-				.ToObservableChangeSet()
-				.Select(_ => configuration.Targets.IndexOf(Target) != configuration.Targets.Count - 1));
 	}
 
 	/// <summary>
@@ -421,22 +400,6 @@ public sealed class TargetViewModel : ViewModelBase, IDisposable
 	/// A command to clear <see cref="Transitions" />.
 	/// </summary>
 	public ReactiveCommand<Unit, Unit> ClearHistoryCommand
-	{
-		get;
-	}
-
-	/// <summary>
-	/// A command to move this target up in the list.
-	/// </summary>
-	public ReactiveCommand<Unit, Unit> MoveUpCommand
-	{
-		get;
-	}
-
-	/// <summary>
-	/// A command to move this target down in the list.
-	/// </summary>
-	public ReactiveCommand<Unit, Unit> MoveDownCommand
 	{
 		get;
 	}

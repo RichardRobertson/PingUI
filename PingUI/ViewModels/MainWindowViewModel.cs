@@ -155,8 +155,8 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 			}
 		});
 		_ViewStyle = MainViewStyle.Details;
-		SetDetailsViewCommand = ReactiveCommand.Create(() => { ViewStyle = MainViewStyle.Details; });
-		SetCondensedViewCommand = ReactiveCommand.Create(() => { ViewStyle = MainViewStyle.Condensed; });
+		SetDetailsViewCommand = ReactiveCommand.Create(() => { ViewStyle = MainViewStyle.Details; }, this.WhenValueChanged(vm => vm.IsDetailsView).Select(isDetailsView => !isDetailsView));
+		SetCondensedViewCommand = ReactiveCommand.Create(() => { ViewStyle = MainViewStyle.Condensed; }, this.WhenValueChanged(vm => vm.IsCondensedView).Select(isCondensedView => !isCondensedView));
 	}
 
 	/// <summary>

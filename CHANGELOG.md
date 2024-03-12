@@ -13,10 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New condensed view available in the menu drawer ([#14](https://github.com/RichardRobertson/PingUI/issues/14))
 	- Includes details view option to return to the original appearance
 - Delete all targets button added to menu drawer ([#16](https://github.com/RichardRobertson/PingUI/issues/16))
+- Ability to drag targets on the main detail view to rearrange them ([#17](https://github.com/RichardRobertson/PingUI/issues/17))
 
 ### Changed
 
 - Settings and start/stop all target pings moved to menu drawer
+
+### Removed
+
+- Move Up and Move Down context menu items for targets
 
 # [1.4.0] - 2024-02-26
 

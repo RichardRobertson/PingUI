@@ -6,7 +6,8 @@
 	xmlns:behaviors="using:PingUI.Behaviors"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:ic="using:FluentIcons.Avalonia.Fluent"
-	xmlns:dialogHost="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
+	xmlns:i="using:Avalonia.Xaml.Interactivity"
+	xmlns:dialogHost="using:DialogHostAvalonia"
 	x:Class="PingUI.Views.MainWindow"
 	x:DataType="vm:MainWindowViewModel"
 	Title="{x:Static i18n:Strings.MainWindow_Title}"
@@ -54,12 +55,13 @@
 		</Style>
 	</Window.Styles>
 	<dialogHost:DialogHost CloseOnClickAway="True">
-		<SplitView x:Name="MenuPane">
+		<SplitView>
 			<SplitView.Pane>
 				<Grid RowDefinitions="Auto *">
 					<DockPanel LastChildFill="False">
 						<ToggleButton Classes="Chrome"
-							IsChecked="{Binding #MenuPane.IsPaneOpen}" DockPanel.Dock="Left">
+							IsChecked="{Binding $parent[SplitView].IsPaneOpen}"
+							DockPanel.Dock="Left">
 							<ic:SymbolIcon Symbol="ArrowLeft" />
 						</ToggleButton>
 					</DockPanel>
@@ -74,8 +76,13 @@
 										Value="{DynamicResource MenuFlyoutItemBackground}" />
 									<Setter Property="Foreground"
 										Value="{DynamicResource MenuFlyoutItemForeground}" />
-									<Setter Property="behaviors:DismissSplitViewOnClick.SplitView"
-										Value="{Binding #MenuPane}" />
+									<Setter Property="(i:Interaction.Behaviors)">
+										<i:BehaviorCollectionTemplate>
+											<i:BehaviorCollection>
+												<behaviors:DismissSplitViewOnClickBehavior />
+											</i:BehaviorCollection>
+										</i:BehaviorCollectionTemplate>
+									</Setter>
 								</Style>
 								<Style Selector="Button ic|SymbolIcon">
 									<Setter Property="Margin" Value="8 8 12 8" />
@@ -173,7 +180,7 @@
 				<Grid RowDefinitions="Auto *">
 					<DockPanel LastChildFill="False">
 						<ToggleButton Classes="Chrome"
-							IsChecked="{Binding #MenuPane.IsPaneOpen}"
+							IsChecked="{Binding $parent[SplitView].IsPaneOpen}"
 							DockPanel.Dock="Left">
 							<ic:SymbolIcon Symbol="Navigation" />
 						</ToggleButton>
@@ -188,6 +195,11 @@
 						</ToggleButton>
 					</DockPanel>
 					<ScrollViewer Grid.Row="1">
+						<ScrollViewer.Transitions>
+							<Transitions>
+								<VectorTransition Property="Offset" Duration="0:0:0.1" />
+							</Transitions>
+						</ScrollViewer.Transitions>
 						<ScrollViewer.Styles>
 							<Style Selector="Button.Unknown">
 								<Setter Property="Background" Value="#333333" />
@@ -198,16 +210,7 @@
 							<Style Selector="Button.Failure">
 								<Setter Property="Background" Value="#9C2B2E" />
 							</Style>
-							<Style Selector="ItemsRepeater.Details">
-								<Setter Property="ItemTemplate">
-									<Setter.Value>
-										<DataTemplate DataType="vm:TargetViewModel">
-											<v:TargetView />
-										</DataTemplate>
-									</Setter.Value>
-								</Setter>
-							</Style>
-							<Style Selector="ItemsRepeater.Condensed">
+							<Style Selector="ItemsControl.Condensed">
 								<Setter Property="ItemTemplate">
 									<Setter.Value>
 										<DataTemplate DataType="vm:TargetViewModel">
@@ -233,14 +236,41 @@
 										</DataTemplate>
 									</Setter.Value>
 								</Setter>
-								<Setter Property="Layout">
+								<Setter Property="ItemsPanel">
 									<Setter.Value>
-										<WrapLayout />
+										<ItemsPanelTemplate>
+											<WrapPanel />
+										</ItemsPanelTemplate>
 									</Setter.Value>
 								</Setter>
 							</Style>
+							<Style Selector="ItemsControl.Draggable > ContentPresenter">
+								<Setter Property="(i:Interaction.Behaviors)">
+									<i:BehaviorCollectionTemplate>
+										<i:BehaviorCollection>
+											<behaviors:DragArrangeBehavior />
+										</i:BehaviorCollection>
+									</i:BehaviorCollectionTemplate>
+								</Setter>
+								<Setter Property="Transitions">
+									<Setter.Value>
+										<Transitions>
+											<TransformOperationsTransition
+												Property="RenderTransform" Duration="0:0:0.1" />
+										</Transitions>
+									</Setter.Value>
+								</Setter>
+							</Style>
+							<Style Selector="ItemsControl.Draggable > ContentPresenter:dragging">
+								<Setter Property="ZIndex" Value="1" />
+							</Style>
+							<Style
+								Selector="ItemsControl.Draggable > ContentPresenter:dragging > v|TargetView">
+								<Setter Property="BoxShadow" Value="5 5 10 0 Black" />
+							</Style>
 						</ScrollViewer.Styles>
-						<ItemsRepeater ItemsSource="{Binding Targets}"
+						<ItemsControl ItemsSource="{Binding Targets}"
+							Classes.Draggable="{Binding IsDetailsView}"
 							Classes.Details="{Binding IsDetailsView}"
 							Classes.Condensed="{Binding IsCondensedView}" />
 					</ScrollViewer>
