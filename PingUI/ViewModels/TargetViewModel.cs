@@ -33,11 +33,6 @@ public sealed class TargetViewModel : ViewModelBase, IDisposable
 	private readonly ObservableCollection<PingResult> _History;
 
 	/// <summary>
-	/// Backing store for <see cref="Transitions" />.
-	/// </summary>
-	private ReadOnlyObservableCollection<PingResultViewModel>? _Transitions;
-
-	/// <summary>
 	/// Backing store for <see cref="Successes" />.
 	/// </summary>
 	private int _Successes;
@@ -222,10 +217,9 @@ public sealed class TargetViewModel : ViewModelBase, IDisposable
 	/// Gets the list of ping result changes.
 	/// </summary>
 	/// <remarks>Not every ping result is logged. Entries are only added when <see cref="PingResult.Status" /> changes.</remarks>
-	public ReadOnlyObservableCollection<PingResultViewModel>? Transitions
+	public ReadOnlyObservableCollection<PingResultViewModel> Transitions
 	{
-		get => _Transitions;
-		private set => this.RaiseAndSetIfChanged(ref _Transitions, value);
+		get;
 	}
 
 	/// <summary>
@@ -257,6 +251,10 @@ public sealed class TargetViewModel : ViewModelBase, IDisposable
 							if (_History[0].Status != item.Status)
 							{
 								_History.Insert(0, item);
+							}
+							else
+							{
+								Transitions[0].IncrementCount();
 							}
 							if (item.Status == IPStatus.Success)
 							{
