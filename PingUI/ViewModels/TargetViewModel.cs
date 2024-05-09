@@ -20,7 +20,7 @@ namespace PingUI.ViewModels;
 /// <summary>
 /// Represents an interface that displays a <see cref="Models.Target" /> and interacts with the <see cref="IPinger" /> service.
 /// </summary>
-public sealed class TargetViewModel : ViewModelBase, IDisposable
+public sealed class TargetViewModel : ViewModelBase
 {
 	/// <summary>
 	/// Disposable container that handles the <see cref="IPinger" /> observable.
@@ -418,11 +418,8 @@ public sealed class TargetViewModel : ViewModelBase, IDisposable
 		get;
 	}
 
-	/// <summary>
-	/// Implementation for <see cref="Dispose()" />.
-	/// </summary>
-	/// <param name="disposing"><see langword="true" /> if called from <see cref="Dispose()" />; <see langword="false" /> if called from finalizer.</param>
-	private void Dispose(bool disposing)
+	/// <inheritdoc />
+	protected override void Dispose(bool disposing)
 	{
 		if (!disposedValue)
 		{
@@ -432,13 +429,5 @@ public sealed class TargetViewModel : ViewModelBase, IDisposable
 			}
 			disposedValue = true;
 		}
-	}
-
-	/// <inheritdoc />
-	public void Dispose()
-	{
-		// Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-		Dispose(disposing: true);
-		GC.SuppressFinalize(this);
 	}
 }

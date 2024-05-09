@@ -23,6 +23,7 @@ public class ReadOnlyObservableMappedCollection<TKey, TSourceCollection, TValue>
 	INotifyPropertyChanged,
 	INotifyCollectionChanged,
 	IDisposable
+	where TKey : notnull
 	where TSourceCollection : INotifyCollectionChanged, IReadOnlyList<TKey>
 {
 	/// <summary>
