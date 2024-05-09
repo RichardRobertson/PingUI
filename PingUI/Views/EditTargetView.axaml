@@ -108,9 +108,10 @@
 				</Style>
 			</StackPanel.Styles>
 			<Button Content="{x:Static i18n:Strings.Dialog_Cancel}"
-				Command="{Binding CancelDialogCommand}" Margin="4" />
+				Command="{Binding CancelDialogCommand}" Margin="4" IsCancel="True" />
 			<Button Command="{Binding AcceptDialogCommand}" Margin="4" Background="DarkGreen"
-				Classes.Apply="{Binding !IsNewTarget}" Classes.Create="{Binding IsNewTarget}" />
+				Classes.Apply="{Binding !IsNewTarget}" Classes.Create="{Binding IsNewTarget}"
+				IsDefault="True" />
 		</StackPanel>
 	</StackPanel>
 </UserControl>

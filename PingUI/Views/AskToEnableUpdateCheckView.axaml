@@ -8,10 +8,10 @@
 		<TextBlock Text="{x:Static i18n:Strings.AskToEnableUpdateCheckView_Body}" Margin="4" />
 		<StackPanel Orientation="Horizontal" Margin="8" HorizontalAlignment="Right">
 			<Button Content="{x:Static i18n:Strings.Dialog_No}"
-				Command="{Binding NoDialogCommand}" Margin="4" />
+				Command="{Binding NoDialogCommand}" Margin="4" IsCancel="True" />
 			<Button Content="{x:Static i18n:Strings.Dialog_Yes}"
 				Command="{Binding YesDialogCommand}" Margin="4"
-				Background="DarkGreen" />
+				Background="DarkGreen" IsDefault="True" />
 		</StackPanel>
 	</StackPanel>
 </UserControl>

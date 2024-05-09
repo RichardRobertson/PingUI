@@ -13,7 +13,7 @@
 			<Button Content="{x:Static i18n:Strings.DialogErrorReporterView_Copy}" Margin="8"
 				Click="CopyButton_Click" />
 			<Button Content="{x:Static i18n:Strings.Dialog_Dismiss}" Margin="8"
-				Click="DismissButton_Click" />
+				Click="DismissButton_Click" IsCancel="True" />
 		</StackPanel>
 		<ic:SymbolIcon Symbol="Warning" FontSize="64" Margin="8"
 			Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}"

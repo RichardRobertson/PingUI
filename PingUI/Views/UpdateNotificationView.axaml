@@ -11,10 +11,10 @@
 		<md:MarkdownScrollViewer Grid.Row="1" Markdown="{Binding ReleaseBodyMarkdown}" />
 		<StackPanel Grid.Row="2" Orientation="Horizontal" Margin="8" HorizontalAlignment="Right">
 			<Button Content="{x:Static i18n:Strings.Dialog_Dismiss}"
-				Command="{Binding DismissDialogCommand}" Margin="4" />
+				Command="{Binding DismissDialogCommand}" Margin="4" IsCancel="True" />
 			<Button Content="{x:Static i18n:Strings.Dialog_Go}"
 				Command="{Binding OpenReleaseWebpageCommand}" Margin="4"
-				Background="DarkGreen" />
+				Background="DarkGreen" IsDefault="True" />
 		</StackPanel>
 	</Grid>
 </UserControl>

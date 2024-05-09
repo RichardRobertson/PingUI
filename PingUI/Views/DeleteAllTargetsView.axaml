@@ -11,10 +11,10 @@
 			TextAlignment="Center" TextWrapping="Wrap" />
 		<StackPanel Orientation="Horizontal" Margin="8" HorizontalAlignment="Right">
 			<Button Content="{x:Static i18n:Strings.Dialog_Cancel}"
-				Command="{Binding CancelDialogCommand}" Margin="4" />
+				Command="{Binding CancelDialogCommand}" Margin="4" IsCancel="True" />
 			<Button Content="{x:Static i18n:Strings.Dialog_Delete}"
 				Command="{Binding AcceptDialogCommand}" Margin="4"
-				Background="DarkRed" />
+				Background="DarkRed" IsDefault="True" />
 		</StackPanel>
 	</StackPanel>
 </UserControl>
