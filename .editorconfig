@@ -26,7 +26,7 @@ roslynator_array_creation_type_style = implicit_when_type_is_obvious
 roslynator_arrow_token_new_line = after
 # Applicable to: rcs0032
 
-roslynator_binary_operator_new_line = after
+roslynator_binary_operator_new_line = before
 # Applicable to: rcs0027
 
 roslynator_blank_line_after_file_scoped_namespace_declaration = true
@@ -37,6 +37,9 @@ roslynator_blank_line_between_closing_brace_and_switch_section = false
 
 roslynator_blank_line_between_single_line_accessors = false
 # Applicable to: rcs0011
+
+roslynator_blank_line_between_switch_sections = omit
+# Applicable to: rcs0061
 
 roslynator_blank_line_between_using_directives = never
 # Applicable to: rcs0015
@@ -99,15 +102,15 @@ roslynator_object_creation_type_style = implicit_when_type_is_obvious
 
 # roslynator_prefix_field_identifier_with_underscore = true|false
 
-# roslynator_suppress_unity_script_methods = true|false
-# Applicable to: rcs1213
-
 roslynator_tab_length = 4
 # Default: 4
 # Applicable to: rcs0056
 
 roslynator_trailing_comma_style = omit_when_single_line
 # Applicable to: rcs1260
+
+roslynator_unity_code_analysis.enabled = false
+# Applicable to: rcs1169, rcs1213
 
 roslynator_use_anonymous_function_or_method_group = method_group
 # Applicable to: rcs1207
@@ -117,6 +120,12 @@ roslynator_use_block_body_when_declaration_spans_over_multiple_lines = true
 
 roslynator_use_block_body_when_expression_spans_over_multiple_lines = true
 # Applicable to: rcs1016
+
+roslynator_use_collection_expression = true
+# Applicable to: rcs1014, rcs1250
+
+roslynator_use_var = always
+# Applicable to: rcs1264
 
 roslynator_use_var_instead_of_implicit_object_creation = true
 # Applicable to: rcs1250
@@ -161,10 +170,6 @@ dotnet_diagnostic.rcs0012.severity = none
 # Add blank line between single-line declarations of different kind
 dotnet_diagnostic.rcs0013.severity = warning
 
-# Add blank line between switch sections
-dotnet_diagnostic.rcs0014.severity = none
-# Options: roslynator_blank_line_between_closing_brace_and_switch_section
-
 # Add/remove blank line between using directives
 dotnet_diagnostic.rcs0015.severity = none
 # Options: roslynator_blank_line_between_using_directives
@@ -200,7 +205,7 @@ dotnet_diagnostic.rcs0028.severity = warning
 # Put constructor initializer on its own line
 dotnet_diagnostic.rcs0029.severity = warning
 
-# Add new line before embedded statement
+# Put embedded statement on its own line
 dotnet_diagnostic.rcs0030.severity = none
 
 # Put enum member on its own line
@@ -210,7 +215,7 @@ dotnet_diagnostic.rcs0031.severity = warning
 dotnet_diagnostic.rcs0032.severity = warning
 # Options: roslynator_arrow_token_new_line
 
-# Add new line before statement
+# Put statement on its own line
 dotnet_diagnostic.rcs0033.severity = warning
 
 # Put type parameter constraint on its own line
@@ -282,6 +287,10 @@ dotnet_diagnostic.rcs0059.severity = warning
 dotnet_diagnostic.rcs0060.severity = warning
 # Options: roslynator_blank_line_after_file_scoped_namespace_declaration
 
+# Add/remove blank line between switch sections
+dotnet_diagnostic.rcs0061.severity = warning
+# Options: roslynator_blank_line_between_switch_sections
+
 # Add braces (when expression spans over multiple lines)
 dotnet_diagnostic.rcs1001.severity = warning
 
@@ -303,24 +312,12 @@ dotnet_diagnostic.rcs1006.severity = silent
 # Add braces
 dotnet_diagnostic.rcs1007.severity = warning
 
-# Use explicit type instead of 'var' (when the type is not obvious)
-dotnet_diagnostic.rcs1008.severity = silent
-
-# Use explicit type instead of 'var' (foreach variable)
-dotnet_diagnostic.rcs1009.severity = none
-
-# Use 'var' instead of explicit type (when the type is obvious)
-dotnet_diagnostic.rcs1010.severity = suggestion
-
-# Use explicit type instead of 'var' (when the type is obvious)
-dotnet_diagnostic.rcs1012.severity = none
-
 # Use predefined type
 dotnet_diagnostic.rcs1013.severity = warning
 
 # Use explicitly/implicitly typed array
 dotnet_diagnostic.rcs1014.severity = suggestion
-# Options: roslynator_array_creation_type_style
+# Options: roslynator_array_creation_type_style, roslynator_use_collection_expression
 
 # Use nameof operator
 dotnet_diagnostic.rcs1015.severity = suggestion
@@ -396,7 +393,7 @@ dotnet_diagnostic.rcs1051.severity = suggestion
 # Declare each attribute separately
 dotnet_diagnostic.rcs1052.severity = warning
 
-# Avoid semicolon at the end of declaration
+# Unnecessary semicolon at the end of declaration
 dotnet_diagnostic.rcs1055.severity = suggestion
 
 # Avoid usage of using alias directive
@@ -464,7 +461,7 @@ dotnet_diagnostic.rcs1089.severity = suggestion
 dotnet_diagnostic.rcs1090.severity = suggestion
 # Options: roslynator_configure_await
 
-# Remove file with no code
+# File contains no code
 dotnet_diagnostic.rcs1093.severity = suggestion
 
 # Declare using directive on top level
@@ -623,6 +620,7 @@ dotnet_diagnostic.rcs1168.severity = silent
 
 # Make field read-only
 dotnet_diagnostic.rcs1169.severity = suggestion
+# Options: roslynator_unity_code_analysis.enabled
 
 # Use read-only auto-implemented property
 dotnet_diagnostic.rcs1170.severity = suggestion
@@ -641,12 +639,6 @@ dotnet_diagnostic.rcs1174.severity = silent
 
 # Unused 'this' parameter
 dotnet_diagnostic.rcs1175.severity = suggestion
-
-# Use 'var' instead of explicit type (when the type is not obvious)
-dotnet_diagnostic.rcs1176.severity = none
-
-# Use 'var' instead of explicit type (in foreach)
-dotnet_diagnostic.rcs1177.severity = silent
 
 # Unnecessary assignment
 dotnet_diagnostic.rcs1179.severity = suggestion
@@ -697,7 +689,7 @@ dotnet_diagnostic.rcs1196.severity = suggestion
 dotnet_diagnostic.rcs1197.severity = suggestion
 
 # Avoid unnecessary boxing of value type
-dotnet_diagnostic.rcs1198.severity = suggestion
+dotnet_diagnostic.rcs1198.severity = none
 
 # Unnecessary null check
 dotnet_diagnostic.rcs1199.severity = suggestion
@@ -744,7 +736,7 @@ dotnet_diagnostic.rcs1212.severity = suggestion
 
 # Remove unused member declaration
 dotnet_diagnostic.rcs1213.severity = suggestion
-# Options: roslynator_suppress_unity_script_methods
+# Options: roslynator_unity_code_analysis.enabled
 
 # Unnecessary interpolated string
 dotnet_diagnostic.rcs1214.severity = suggestion
@@ -785,7 +777,7 @@ dotnet_diagnostic.rcs1226.severity = suggestion
 # Validate arguments correctly
 dotnet_diagnostic.rcs1227.severity = suggestion
 
-# Unused element in documentation comment
+# Unused element in a documentation comment
 dotnet_diagnostic.rcs1228.severity = silent
 
 # Use async/await when necessary
@@ -848,7 +840,7 @@ dotnet_diagnostic.rcs1249.severity = suggestion
 
 # Use implicit/explicit object creation
 dotnet_diagnostic.rcs1250.severity = suggestion
-# Options: roslynator_object_creation_type_style, roslynator_use_var_instead_of_implicit_object_creation
+# Options: roslynator_object_creation_type_style, roslynator_use_collection_expression, roslynator_use_var_instead_of_implicit_object_creation
 
 # Remove unnecessary braces from record declaration
 dotnet_diagnostic.rcs1251.severity = suggestion
@@ -883,6 +875,31 @@ dotnet_diagnostic.rcs1259.severity = suggestion
 # Add/remove trailing comma
 dotnet_diagnostic.rcs1260.severity = suggestion
 # Options: roslynator_trailing_comma_style
+
+# Resource can be disposed asynchronously
+dotnet_diagnostic.rcs1261.severity = suggestion
+
+# Unnecessary raw string literal
+dotnet_diagnostic.rcs1262.severity = suggestion
+
+# Invalid reference in a documentation comment
+dotnet_diagnostic.rcs1263.severity = warning
+
+# Use 'var' or explicit type
+dotnet_diagnostic.rcs1264.severity = suggestion
+# Options: roslynator_use_var
+
+# Remove redundant catch block
+dotnet_diagnostic.rcs1265.severity = suggestion
+
+# Use raw string literal
+dotnet_diagnostic.rcs1266.severity = suggestion
+
+# Use string interpolation instead of 'string.Concat'
+dotnet_diagnostic.rcs1267.severity = suggestion
+
+# Simplify numeric comparison
+dotnet_diagnostic.rcs1268.severity = suggestion
 
 # Use pattern matching
 dotnet_diagnostic.rcs9001.severity = silent
@@ -1290,8 +1307,12 @@ roslynator_compiler_diagnostic_fix.cs8112.enabled = true
 roslynator_compiler_diagnostic_fix.cs8139.enabled = true
 roslynator_compiler_diagnostic_fix.cs8340.enabled = true
 roslynator_compiler_diagnostic_fix.cs8403.enabled = true
+roslynator_compiler_diagnostic_fix.cs8600.enabled = true
 roslynator_compiler_diagnostic_fix.cs8602.enabled = true
 roslynator_compiler_diagnostic_fix.cs8604.enabled = true
+roslynator_compiler_diagnostic_fix.cs8610.enabled = true
 roslynator_compiler_diagnostic_fix.cs8618.enabled = true
 roslynator_compiler_diagnostic_fix.cs8625.enabled = true
 roslynator_compiler_diagnostic_fix.cs8632.enabled = true
+roslynator_compiler_diagnostic_fix.cs8765.enabled = true
+roslynator_compiler_diagnostic_fix.cs8767.enabled = true
