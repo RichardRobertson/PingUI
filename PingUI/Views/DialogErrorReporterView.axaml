@@ -17,7 +17,7 @@
 		</StackPanel>
 		<ic:SymbolIcon Symbol="Warning" FontSize="64" Margin="8"
 			Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}"
-			DockPanel.Dock="Left" />
+			DockPanel.Dock="Left" HorizontalAlignment="Center" VerticalAlignment="Center" />
 		<TextBlock Text="{Binding Context}" Margin="8" DockPanel.Dock="Top"
 			Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}" />
 		<TextBlock Text="{Binding Exception}" Margin="8" />
