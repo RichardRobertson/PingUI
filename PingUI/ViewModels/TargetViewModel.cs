@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -98,6 +99,11 @@ public sealed class TargetViewModel : ViewModelBase
 	private readonly ObservableAsPropertyHelper<TimeSpan> _CoolDown;
 
 	/// <summary>
+	/// Backing store for <see cref="Tags" />.
+	/// </summary>
+	private readonly ObservableAsPropertyHelper<ImmutableSortedSet<string>> _Tags;
+
+	/// <summary>
 	/// Initializes a new <see cref="TargetViewModel" />.
 	/// </summary>
 	/// <param name="target">The target to display.</param>
@@ -113,6 +119,9 @@ public sealed class TargetViewModel : ViewModelBase
 		_CoolDown = this.WhenAnyValue(vm => vm.Target)
 			.Select(target => target.CoolDown)
 			.ToProperty(this, vm => vm.CoolDown);
+		_Tags = this.WhenAnyValue(vm => vm.Target)
+			.Select(target => target.Tags)
+			.ToProperty(this, vm => vm.Tags);
 		_Pinger = new SerialDisposable();
 		_History = [new PingResult(IPStatus.Unknown, DateTime.Now)];
 		_Disposables = [];
@@ -301,6 +310,14 @@ public sealed class TargetViewModel : ViewModelBase
 	public TimeSpan CoolDown
 	{
 		get => _CoolDown.Value;
+	}
+
+	/// <summary>
+	/// Gets the tag collection of <see cref="Target" />.
+	/// </summary>
+	public ImmutableSortedSet<string> Tags
+	{
+		get => _Tags.Value;
 	}
 
 	/// <summary>
