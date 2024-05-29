@@ -13,5 +13,6 @@
 		<Style Selector="Window">
 			<Setter Property="Icon" Value="/Assets/PingUI.ico" />
 		</Style>
+		<StyleInclude Source="avares://PingUI/Themes/Generic.axaml" />
 	</Application.Styles>
 </Application>

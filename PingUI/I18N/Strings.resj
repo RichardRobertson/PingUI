@@ -83,6 +83,8 @@
 		// SettingsView
 		"SettingsView_CheckOnlineForUpdates": "Check online for updates?",
 		"SettingsView_RememberWindowLocation": "Remember window location?",
+		// TagInputControl
+		"TagInputControl_Watermark": "Type a tag and press enter",
 		// System.Net.NetworkInformation.IPStatus enum
 		"System_Net_NetworkInformation_IPStatus_Success": "Success",
 		"System_Net_NetworkInformation_IPStatus_DestinationNetworkUnreachable": "Destination Network Unreachable",

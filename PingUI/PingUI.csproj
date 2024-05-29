@@ -25,6 +25,7 @@
 	<ItemGroup>
 		<Folder Include="Models\" />
 		<AvaloniaResource Include="Assets\**" />
+		<AvaloniaResource Include="Themes\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -42,8 +43,7 @@
 
 	<Target Name="BuildInstaller" AfterTargets="CopyNativeBinary">
 		<Message Text="Zip publish contents and build MSI file" Importance="High" />
-		<Exec
-			Command="pwsh $(SolutionDir)build-package.ps1 -ProjectDir &quot;$(ProjectDir.TrimEnd('\'))&quot; -PublishDir &quot;$(PublishDir.TrimEnd('\'))&quot; -SolutionDir &quot;$(SolutionDir.TrimEnd('\'))&quot; -AssemblyName &quot;$(AssemblyName)&quot; -Product &quot;$(Product)&quot; -RuntimeIdentifier &quot;$(RuntimeIdentifier)&quot; -Version &quot;$(Version)&quot;" />
+		<Exec Command="pwsh $(SolutionDir)build-package.ps1 -ProjectDir &quot;$(ProjectDir.TrimEnd('\'))&quot; -PublishDir &quot;$(PublishDir.TrimEnd('\'))&quot; -SolutionDir &quot;$(SolutionDir.TrimEnd('\'))&quot; -AssemblyName &quot;$(AssemblyName)&quot; -Product &quot;$(Product)&quot; -RuntimeIdentifier &quot;$(RuntimeIdentifier)&quot; -Version &quot;$(Version)&quot;" />
 	</Target>
 
 	<ItemGroup>
@@ -51,12 +51,12 @@
 		<PackageReference Include="Avalonia.Desktop" Version="11.0.10" />
 		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.10" />
 		<PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.10" />
-		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics"
-			Version="11.0.10" />
+		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.10" />
 		<PackageReference Include="Avalonia.ReactiveUI" Version="11.0.10" />
 		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.0.10" />
 		<PackageReference Include="DialogHost.Avalonia" Version="0.7.7" />
 		<PackageReference Include="FluentIcons.Avalonia.Fluent" Version="1.1.239" />
+		<PackageReference Include="FuzzierSharp" Version="3.0.1" />
 		<PackageReference Include="Markdown.Avalonia.Tight" Version="11.0.2" />
 		<PackageReference Include="ReactiveUI.Validation" Version="4.0.6" />
 		<PackageReference Include="Sylvan.BuildTools.Resources" Version="0.6.1">

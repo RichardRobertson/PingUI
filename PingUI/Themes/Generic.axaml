@@ -1,0 +1,67 @@
+<Styles xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:c="using:PingUI.Controls"
+	xmlns:m="using:PingUI.Markup"
+	xmlns:i18n="using:PingUI.I18N"
+	xmlns:ic="using:FluentIcons.Avalonia.Fluent"
+	xmlns:s="using:System">
+	<Style Selector="c|TagInputControl">
+		<Setter Property="Background" Value="{DynamicResource TextControlBackground}" />
+		<Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrush}" />
+		<Setter Property="BorderThickness" Value="{DynamicResource TextControlBorderThemeThickness}" />
+		<Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+		<Setter Property="ItemsPanel">
+			<Setter.Value>
+				<ItemsPanelTemplate>
+					<c:WrapPanelWithTail>
+						<c:WrapPanelWithTail.Tail>
+							<AutoCompleteBox x:Name="PART_TextBox" HorizontalAlignment="Stretch"
+								Watermark="{x:Static i18n:Strings.TagInputControl_Watermark}"
+								BorderThickness="0" FilterMode="Custom" />
+						</c:WrapPanelWithTail.Tail>
+					</c:WrapPanelWithTail>
+				</ItemsPanelTemplate>
+			</Setter.Value>
+		</Setter>
+		<Setter Property="ItemTemplate">
+			<DataTemplate DataType="s:String">
+				<Border Background="{m:TagColor}" CornerRadius="12" Margin="2" Padding="8 2">
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="{Binding}" VerticalAlignment="Center" />
+						<Button
+							Command="{Binding DeleteItemCommand, RelativeSource={RelativeSource AncestorType=c:TagInputControl}}"
+							CommandParameter="{Binding}" Padding="0" Background="Transparent">
+							<ic:SymbolIcon Symbol="DismissCircle" IsFilled="True" />
+						</Button>
+					</StackPanel>
+				</Border>
+			</DataTemplate>
+		</Setter>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate>
+					<Border Background="{TemplateBinding Background}"
+						BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{TemplateBinding BorderThickness}"
+						CornerRadius="{TemplateBinding CornerRadius}"
+						Padding="{TemplateBinding Padding}">
+						<Border.Styles>
+							<Style
+								Selector="TextBox#PART_TextBox:focus-within /template/ Border#PART_BorderElement">
+								<Setter Property="BorderThickness" Value="0" />
+							</Style>
+						</Border.Styles>
+						<ItemsPresenter Name="PART_ItemsPresenter"
+							ItemsPanel="{TemplateBinding ItemsPanel}" />
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style Selector="c|TagInputControl:focus-within">
+		<Setter Property="Background" Value="{DynamicResource TextControlBackgroundFocused}" />
+		<Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrushFocused}" />
+		<Setter Property="BorderThickness"
+			Value="{DynamicResource TextControlBorderThemeThicknessFocused}" />
+	</Style>
+</Styles>
