@@ -48,7 +48,7 @@ public abstract record Tag : IParsable<Tag>
 
 	/// <inheritdoc cref="TryParse" />
 	/// <param name="exception">The <see cref="Exception" /> to be throw if <see cref="TryParseInner" /> returns <see langword="false" />.</param>
-	internal static bool TryParseInner(string s, [MaybeNullWhen(false)] out Tag result, [NotNullWhen(false)] out Exception? exception)
+	private static bool TryParseInner(string s, [MaybeNullWhen(false)] out Tag result, [NotNullWhen(false)] out Exception? exception)
 	{
 		static Token? ReadString(ref ReadOnlySpan<char> span)
 		{
