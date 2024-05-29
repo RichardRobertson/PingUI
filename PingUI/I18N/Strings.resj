@@ -19,9 +19,11 @@
 		"Shared_Label_Address": "Address: ",
 		"Shared_Label_Label": "Label: ",
 		"Shared_Label_CoolDown": "Cool down: ",
+		"Shared_Label_Tags": "Tags: ",
 		"Shared_ToolTip_Address": "The IP address to ping",
 		"Shared_ToolTip_Label": "The optional name to display on this target",
 		"Shared_ToolTip_CoolDown": "The amount of time to wait between pings",
+		"Shared_ToolTip_Tags": "The tags to categorize this target",
 		// Shared dialog buttons
 		"Dialog_Apply": "Apply",
 		"Dialog_Cancel": "Cancel",

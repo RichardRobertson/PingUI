@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:vm="using:PingUI.ViewModels"
+	xmlns:c="using:PingUI.Controls"
 	xmlns:i18n="using:PingUI.I18N"
 	x:Class="PingUI.Views.EditTargetView"
 	x:DataType="vm:EditTargetViewModel">
@@ -15,7 +16,7 @@
 		</StackPanel.Styles>
 		<TextBlock Margin="8" FontSize="24" HorizontalAlignment="Center"
 			Classes.IsNew="{Binding IsNewTarget}" Classes.IsNotNew="{Binding !IsNewTarget}" />
-		<Grid ColumnDefinitions="Auto *" RowDefinitions="Auto Auto Auto Auto" Margin="8"
+		<Grid ColumnDefinitions="Auto *" RowDefinitions="Auto Auto Auto Auto Auto" Margin="8"
 			HorizontalAlignment="Center">
 			<Grid.Styles>
 				<Style Selector="Label">
@@ -97,6 +98,10 @@
 					Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}"
 					Grid.Row="2" Grid.ColumnSpan="4" />
 			</Grid>
+			<Label Content="{x:Static i18n:Strings.Shared_Label_Tags}" Grid.Row="4"
+				ToolTip.Tip="{x:Static i18n:Strings.Shared_ToolTip_Tags}" Target="Tags" />
+			<c:TagInputControl x:Name="Tags" ItemsSource="{Binding Tags}"
+				Grid.Row="4" Grid.Column="1" />
 		</Grid>
 		<StackPanel Orientation="Horizontal" Margin="8" HorizontalAlignment="Right">
 			<StackPanel.Styles>

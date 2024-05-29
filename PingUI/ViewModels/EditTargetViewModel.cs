@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
@@ -9,7 +10,6 @@ using DynamicData.Binding;
 using PingUI.I18N;
 using PingUI.Models;
 using ReactiveUI;
-using ReactiveUI.Validation.Contexts;
 using ReactiveUI.Validation.Extensions;
 
 namespace PingUI.ViewModels;
@@ -71,6 +71,7 @@ public class EditTargetViewModel : ViewModelBase
 		Hours = target?.CoolDown.Hours ?? 0;
 		Minutes = target?.CoolDown.Minutes ?? 0;
 		Seconds = target?.CoolDown.Seconds ?? 0;
+		Tags = new ObservableCollectionExtended<string>(target?.Tags ?? Enumerable.Empty<string>());
 		CancelDialogCommand = ReactiveCommand.Create(() => DialogHost.GetDialogSession(null)?.Close());
 		AcceptDialogCommand = ReactiveCommand.Create(
 			() =>
@@ -79,7 +80,8 @@ public class EditTargetViewModel : ViewModelBase
 						new Target(
 							IPAddress.Parse(Address!),
 							Label,
-							new TimeSpan(_Hours ?? 0, _Minutes ?? 0, _Seconds ?? 0))),
+							new TimeSpan(_Hours ?? 0, _Minutes ?? 0, _Seconds ?? 0),
+							Tags.ToImmutableSortedSet())),
 			ValidationContext.Valid);
 		_IPSuggestions = [];
 		IPSuggestions = new ReadOnlyObservableCollection<IPAddress>(_IPSuggestions);
@@ -221,6 +223,15 @@ public class EditTargetViewModel : ViewModelBase
 	{
 		get => _Seconds;
 		set => this.RaiseAndSetIfChanged(ref _Seconds, value);
+	}
+
+	/// <summary>
+	/// The tags to associate with this target.
+	/// </summary>
+	/// <value>A collection of zero or more strings.</value>
+	public ObservableCollectionExtended<string> Tags
+	{
+		get;
 	}
 
 	/// <summary>

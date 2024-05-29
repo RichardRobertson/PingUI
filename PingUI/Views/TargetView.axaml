@@ -4,6 +4,7 @@
 	xmlns:ic="using:FluentIcons.Avalonia.Fluent"
 	xmlns:i18n="using:PingUI.I18N"
 	xmlns:v="using:PingUI.Views"
+	xmlns:m="using:PingUI.Markup"
 	x:Class="PingUI.Views.TargetView"
 	x:DataType="vm:TargetViewModel">
 	<UserControl.Styles>
@@ -41,6 +42,29 @@
 		<Style Selector="ic|SymbolIcon">
 			<Setter Property="HorizontalAlignment" Value="Center" />
 			<Setter Property="VerticalAlignment" Value="Center" />
+		</Style>
+		<Style Selector="Expander /template/ ToggleButton#ExpanderHeader">
+			<Setter Property="(ToolTip.Tip)">
+				<Setter.Value>
+					<Template>
+						<ItemsControl ItemsSource="{Binding Tags}">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<WrapPanel />
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
+							<ItemsControl.ItemTemplate>
+								<DataTemplate>
+									<Border Background="{m:TagColor}" CornerRadius="12" Margin="2"
+										Padding="8 2">
+										<TextBlock Text="{Binding}" VerticalAlignment="Center" />
+									</Border>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+						</ItemsControl>
+					</Template>
+				</Setter.Value>
+			</Setter>
 		</Style>
 	</UserControl.Styles>
 	<Border Background="Transparent" BoxShadow="{Binding $parent[v:TargetView].BoxShadow}"

@@ -2,12 +2,13 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:vm="using:PingUI.ViewModels"
 	xmlns:i18n="using:PingUI.I18N"
+	xmlns:m="using:PingUI.Markup"
 	x:Class="PingUI.Views.DeleteTargetView"
 	x:DataType="vm:DeleteTargetViewModel">
 	<StackPanel>
 		<TextBlock Text="{x:Static i18n:Strings.DeleteTargetView_Header}" Margin="8" FontSize="24"
 			HorizontalAlignment="Center" />
-		<Grid ColumnDefinitions="* *" RowDefinitions="* * *" Margin="8"
+		<Grid ColumnDefinitions="* *" RowDefinitions="* * * *" Margin="8"
 			HorizontalAlignment="Center">
 			<TextBlock Text="{x:Static i18n:Strings.Shared_Label_Address}"
 				ToolTip.Tip="{x:Static i18n:Strings.Shared_ToolTip_Address}"
@@ -21,6 +22,24 @@
 				ToolTip.Tip="{x:Static i18n:Strings.Shared_ToolTip_CoolDown}"
 				HorizontalAlignment="Right" Grid.Row="2" />
 			<TextBlock Text="{Binding CoolDown}" Grid.Row="2" Grid.Column="1" />
+			<TextBlock Text="{x:Static i18n:Strings.Shared_Label_Tags}"
+				ToolTip.Tip="{x:Static i18n:Strings.Shared_ToolTip_Tags}"
+				HorizontalAlignment="Right" Grid.Row="3" />
+			<ItemsControl ItemsSource="{Binding Tags}" Grid.Row="3" Grid.Column="1">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<WrapPanel />
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Border Background="{m:TagColor}" CornerRadius="12" Margin="2"
+							Padding="8 2">
+							<TextBlock Text="{Binding}" VerticalAlignment="Center" />
+						</Border>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
 		</Grid>
 		<StackPanel Orientation="Horizontal" Margin="8" HorizontalAlignment="Right">
 			<Button Content="{x:Static i18n:Strings.Dialog_Cancel}"
