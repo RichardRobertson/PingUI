@@ -7,13 +7,13 @@ namespace PingUI.Tags;
 /// <summary>
 /// Represents a collection of tags that must all match positively.
 /// </summary>
-public record And : Tag
+public record And : FilterBase
 {
 	/// <summary>
 	/// Initializes a new <see cref="And" />.
 	/// </summary>
 	/// <param name="tags">A set of tags to match.</param>
-	public And(IEnumerable<Tag> tags)
+	public And(IEnumerable<FilterBase> tags)
 	{
 		Tags = tags.SelectMany(tag => tag is And and ? and.Tags : [tag]).ToImmutableArray();
 	}
@@ -21,7 +21,7 @@ public record And : Tag
 	/// <summary>
 	/// Gets the set of all tags that must be matched.
 	/// </summary>
-	public ImmutableArray<Tag> Tags
+	public ImmutableArray<FilterBase> Tags
 	{
 		get;
 	}

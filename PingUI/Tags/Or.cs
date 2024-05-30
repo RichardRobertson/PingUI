@@ -7,13 +7,13 @@ namespace PingUI.Tags;
 /// <summary>
 /// Represents a collection of tags, of which at least one must match.
 /// </summary>
-public record Or : Tag
+public record Or : FilterBase
 {
 	/// <summary>
 	/// Initializes a new <see cref="Or" />.
 	/// </summary>
 	/// <param name="tags">A set of tags to match.</param>
-	public Or(IEnumerable<Tag> tags)
+	public Or(IEnumerable<FilterBase> tags)
 	{
 		Tags = tags.SelectMany(tag => tag is Or or ? or.Tags : [tag]).ToImmutableArray();
 	}
@@ -21,7 +21,7 @@ public record Or : Tag
 	/// <summary>
 	/// Gets the set of tags, of which at least one must match.
 	/// </summary>
-	public ImmutableArray<Tag> Tags
+	public ImmutableArray<FilterBase> Tags
 	{
 		get;
 	}

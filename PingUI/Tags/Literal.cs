@@ -7,7 +7,7 @@ namespace PingUI.Tags;
 /// Represents a tag that matches a literal string.
 /// </summary>
 /// <param name="Content">The literal string to match.</param>
-public record Literal(string Content) : Tag
+public record Literal(string Content) : FilterBase
 {
 	/// <inheritdoc />
 	public override bool IsMatch(IReadOnlyList<string> itemTags)

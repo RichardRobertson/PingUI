@@ -5,8 +5,8 @@ namespace PingUI.Tags;
 /// <summary>
 /// Represents a negated tag match.
 /// </summary>
-/// <param name="Inner">The <see cref="Tag" /> to check and return the opposite match result for.</param>
-public record Not(Tag Inner) : Tag
+/// <param name="Inner">The <see cref="FilterBase" /> to check and return the opposite match result for.</param>
+public record Not(FilterBase Inner) : FilterBase
 {
 	/// <inheritdoc />
 	public override bool IsMatch(IReadOnlyList<string> itemTags)

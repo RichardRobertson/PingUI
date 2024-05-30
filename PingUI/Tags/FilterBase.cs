@@ -9,7 +9,7 @@ namespace PingUI.Tags;
 /// <summary>
 /// Base class for tag matching system.
 /// </summary>
-public abstract record Tag : IParsable<Tag>
+public abstract record FilterBase : IParsable<FilterBase>
 {
 	private static readonly Dictionary<TokenType, int> OperatorPrecedence = new()
 	{
@@ -23,7 +23,7 @@ public abstract record Tag : IParsable<Tag>
 	private static readonly System.Buffers.SearchValues<char> TokenSeparatorChars = System.Buffers.SearchValues.Create(" \t()&|!");
 
 	/// <inheritdoc />
-	public static Tag Parse(string s, IFormatProvider? provider)
+	public static FilterBase Parse(string s, IFormatProvider? provider)
 	{
 		if (TryParseInner(s, out var result, out var exception))
 		{
@@ -36,7 +36,7 @@ public abstract record Tag : IParsable<Tag>
 	}
 
 	/// <inheritdoc />
-	public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Tag result)
+	public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out FilterBase result)
 	{
 		if (s is null)
 		{
@@ -48,7 +48,7 @@ public abstract record Tag : IParsable<Tag>
 
 	/// <inheritdoc cref="TryParse" />
 	/// <param name="exception">The <see cref="Exception" /> to be throw if <see cref="TryParseInner" /> returns <see langword="false" />.</param>
-	private static bool TryParseInner(string s, [MaybeNullWhen(false)] out Tag result, [NotNullWhen(false)] out Exception? exception)
+	private static bool TryParseInner(string s, [MaybeNullWhen(false)] out FilterBase result, [NotNullWhen(false)] out Exception? exception)
 	{
 		static Token? ReadString(ref ReadOnlySpan<char> span)
 		{
@@ -150,7 +150,7 @@ public abstract record Tag : IParsable<Tag>
 		{
 			outputQueue.Enqueue(operatorStack.Pop());
 		}
-		var tagStack = new Stack<Tag>();
+		var tagStack = new Stack<FilterBase>();
 		while (outputQueue.Count > 0)
 		{
 			var currentToken = outputQueue.Dequeue();
@@ -173,7 +173,7 @@ public abstract record Tag : IParsable<Tag>
 						exception = new FormatException("And operator with not enough operands on stack.");
 						return false;
 					}
-					tagStack.Push(new And(new Tag[] { tagStack.Pop(), tagStack.Pop() }.Reverse()));
+					tagStack.Push(new And(new FilterBase[] { tagStack.Pop(), tagStack.Pop() }.Reverse()));
 					break;
 				case TokenType.Or:
 					if (tagStack.Count < 2)
@@ -181,7 +181,7 @@ public abstract record Tag : IParsable<Tag>
 						exception = new FormatException("Or operator with not enough operands on stack.");
 						return false;
 					}
-					tagStack.Push(new Or(new Tag[] { tagStack.Pop(), tagStack.Pop() }.Reverse()));
+					tagStack.Push(new Or(new FilterBase[] { tagStack.Pop(), tagStack.Pop() }.Reverse()));
 					break;
 				default:
 					throw new UnreachableException();
@@ -204,7 +204,7 @@ public abstract record Tag : IParsable<Tag>
 	/// Checks to see if an item matches by its tag list.
 	/// </summary>
 	/// <param name="itemTags">A set of strings that represents all tags of the item to match.</param>
-	/// <returns><see langword="true" /> if <paramref name="itemTags" /> matches this <see cref="Tag" />; otherwise <see langword="false" />.</returns>
+	/// <returns><see langword="true" /> if <paramref name="itemTags" /> matches this <see cref="FilterBase" />; otherwise <see langword="false" />.</returns>
 	public abstract bool IsMatch(IReadOnlyList<string> itemTags);
 
 	private enum TokenType
