@@ -5,23 +5,23 @@ using System.Linq;
 namespace PingUI.Tags;
 
 /// <summary>
-/// Represents a collection of tags, of which at least one must match.
+/// Represents a collection of filters, of which at least one must match.
 /// </summary>
 public record Or : FilterBase
 {
 	/// <summary>
 	/// Initializes a new <see cref="Or" />.
 	/// </summary>
-	/// <param name="tags">A set of tags to match.</param>
-	public Or(IEnumerable<FilterBase> tags)
+	/// <param name="filters">A set of filters to match.</param>
+	public Or(IEnumerable<FilterBase> filters)
 	{
-		Tags = tags.SelectMany(tag => tag is Or or ? or.Tags : [tag]).ToImmutableArray();
+		Filters = filters.SelectMany(filter => filter is Or or ? or.Filters : [filter]).ToImmutableArray();
 	}
 
 	/// <summary>
-	/// Gets the set of tags, of which at least one must match.
+	/// Gets the set of filters, of which at least one must match.
 	/// </summary>
-	public ImmutableArray<FilterBase> Tags
+	public ImmutableArray<FilterBase> Filters
 	{
 		get;
 	}
@@ -29,9 +29,9 @@ public record Or : FilterBase
 	/// <inheritdoc />
 	public override bool IsMatch(IReadOnlyList<string> itemTags)
 	{
-		foreach (var tag in Tags)
+		foreach (var filter in Filters)
 		{
-			if (tag.IsMatch(itemTags))
+			if (filter.IsMatch(itemTags))
 			{
 				return true;
 			}
@@ -42,6 +42,6 @@ public record Or : FilterBase
 	/// <inheritdoc />
 	public override string ToString()
 	{
-		return $"({string.Join(" | ", Tags)})";
+		return string.Join(" | ", Filters);
 	}
 }
