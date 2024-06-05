@@ -11,15 +11,6 @@ namespace PingUI.Tags;
 /// </summary>
 public abstract record FilterBase : IParsable<FilterBase>
 {
-	private static readonly Dictionary<TokenType, int> OperatorPrecedence = new()
-	{
-		[TokenType.LeftParenthesis] = 3,
-		[TokenType.RightParenthesis] = 3,
-		[TokenType.Not] = 2,
-		[TokenType.And] = 1,
-		[TokenType.Or] = 0,
-	};
-
 	private static readonly System.Buffers.SearchValues<char> TokenSeparatorChars = System.Buffers.SearchValues.Create(" \t()&|!");
 
 	/// <inheritdoc />
@@ -50,154 +41,153 @@ public abstract record FilterBase : IParsable<FilterBase>
 	/// <param name="exception">The <see cref="Exception" /> to be throw if <see cref="TryParseInner" /> returns <see langword="false" />.</param>
 	private static bool TryParseInner(string s, [MaybeNullWhen(false)] out FilterBase result, [NotNullWhen(false)] out Exception? exception)
 	{
-		static Token? ReadString(ref ReadOnlySpan<char> span)
+		/*
+			grammar = orExpression;
+
+			orExpression = andExpression, {{whitespace}, "|", {whitespace}, andExpression};
+			andExpression = primary, {{whitespace}, "&", {whitespace}, primary};
+			primary = "(", {whitespace}, orExpression, {whitespace}, ")"
+				| "!", {whitespace}, primary
+				| literal;
+			literal = anyNonSeparatorCharacter, {anyNonSeparatorCharacter}
+				| '"', anyNonQuoteCharacter, {anyNonQuoteCharacter}, '"'
+				| "'", anyNonApostropheCharacter, {anyNonApostropheCharacter}, "'"
+				| "`", anyNonBacktickCharacter, {anyNonBacktickCharacter}, "`";
+		*/
+
+		static bool TryReadPrimary(ref ReadOnlySpan<char> span, [NotNullWhen(true)] out FilterBase? result, [NotNullWhen(false)] out Exception? exception)
 		{
-			Token token;
-			if (span[0] == '\"' || span[0] == '\'')
+			result = null;
+			exception = null;
+			if (span.IsEmpty)
+			{
+				exception = new FormatException("Unexpected end of input");
+				return false;
+			}
+			else if (span[0] == '(')
+			{
+				span = span[1..];
+				if (!TryReadOr(ref span, out result, out exception))
+				{
+					return false;
+				}
+				span = span.TrimStart();
+				if (span.IsEmpty || span[0] != ')')
+				{
+					exception = new FormatException("Missing end parenthesis");
+					return false;
+				}
+				span = span[1..];
+				return true;
+			}
+			else if (span[0] == '!')
+			{
+				span = span[1..].TrimStart();
+				if (!TryReadPrimary(ref span, out result, out exception))
+				{
+					exception = new FormatException("Operand missing after `!`");
+					return false;
+				}
+				result = new Not(result);
+				return true;
+			}
+			else if (span[0] == '\"' || span[0] == '\'' || span[0] == '`')
 			{
 				var nextQuote = span[1..].IndexOf(span[0]) + 1;
 				if (nextQuote == 0)
 				{
-					return null;
+					result = null;
+					exception = new FormatException("Missing end quote");
+					return false;
 				}
-				token = new Token(new string(span[1..nextQuote]));
-				span = span[(nextQuote + 1)..].TrimStart();
+				result = new Literal(new string(span[1..nextQuote]));
+				span = span[(nextQuote + 1)..];
 			}
 			else
 			{
-				var nextSymbol = span.IndexOfAny(TokenSeparatorChars);
-				if (nextSymbol == -1)
+				var nextSeparator = span.IndexOfAny(TokenSeparatorChars);
+				if (nextSeparator == -1)
 				{
-					token = new Token(new string(span));
+					result = new Literal(new string(span));
 					span = span[span.Length..];
 				}
 				else
 				{
-					token = new Token(new string(span[..nextSymbol]));
-					span = span[nextSymbol..].TrimStart();
+					result = new Literal(new string(span[..nextSeparator]));
+					span = span[nextSeparator..];
 				}
 			}
-			return token;
+			return true;
 		}
 
-		result = null;
+		static bool TryReadAnd(ref ReadOnlySpan<char> span, [NotNullWhen(true)] out FilterBase? result, [NotNullWhen(false)] out Exception? exception)
+		{
+			result = null;
+			if (!TryReadPrimary(ref span, out var filter, out exception))
+			{
+				return false;
+			}
+			var list = new List<FilterBase>()
+			{
+				filter
+			};
+			while (!span.IsEmpty)
+			{
+				span = span.TrimStart();
+				if (span.IsEmpty || span[0] != '&')
+				{
+					break;
+				}
+				span = span[1..].TrimStart();
+				if (!TryReadPrimary(ref span, out filter, out exception))
+				{
+					exception = new FormatException("Operand missing after `&`", exception);
+					return false;
+				}
+				list.Add(filter);
+			}
+			result = list.Count == 1 ? list[0] : new And(list);
+			return true;
+		}
+
+		static bool TryReadOr(ref ReadOnlySpan<char> span, [NotNullWhen(true)] out FilterBase? result, [NotNullWhen(false)] out Exception? exception)
+		{
+			result = null;
+			if (!TryReadAnd(ref span, out var filter, out exception))
+			{
+				return false;
+			}
+			var list = new List<FilterBase>()
+			{
+				filter
+			};
+			while (!span.IsEmpty)
+			{
+				span = span.TrimStart();
+				if (span.IsEmpty || span[0] != '|')
+				{
+					break;
+				}
+				span = span[1..].TrimStart();
+				if (!TryReadAnd(ref span, out filter, out exception))
+				{
+					exception = new FormatException("Operand missing after `|`", exception);
+					return false;
+				}
+				list.Add(filter);
+			}
+			result = list.Count == 1 ? list[0] : new Or(list);
+			return true;
+		}
+
 		if (s is null)
 		{
 			exception = new ArgumentNullException(nameof(s));
+			result = null;
 			return false;
 		}
 		var span = s.AsSpan().Trim();
-		var tokens = new List<Token>();
-		while (!span.IsEmpty)
-		{
-			var token = span[0] switch
-			{
-				'(' => Token.LeftParenthesis,
-				')' => Token.RightParenthesis,
-				'&' => Token.And,
-				'|' => Token.Or,
-				'!' => Token.Not,
-				_ => ReadString(ref span),
-			};
-			if (token is null)
-			{
-				exception = new FormatException("Missing end quote.");
-				return false;
-			}
-			tokens.Add(token);
-			if (token.Type != TokenType.Value)
-			{
-				span = span[1..].TrimStart();
-			}
-		}
-		var operatorStack = new Stack<Token>();
-		var outputQueue = new Queue<Token>();
-		foreach (var token in tokens)
-		{
-			switch (token.Type)
-			{
-				case TokenType.Value:
-					outputQueue.Enqueue(token);
-					break;
-				case TokenType.LeftParenthesis:
-					operatorStack.Push(token);
-					break;
-				case TokenType.RightParenthesis:
-					while (operatorStack.Count > 0 && operatorStack.Peek().Type != TokenType.LeftParenthesis)
-					{
-						outputQueue.Enqueue(operatorStack.Pop());
-					}
-					if (operatorStack.Count == 0)
-					{
-						exception = new FormatException("Mismatched parenthesis.");
-						return false;
-					}
-					operatorStack.Pop();
-					break;
-				// case TokenType.Not:
-				// case TokenType.And:
-				// case TokenType.Or:
-				default:
-					while (operatorStack.Count > 0 && operatorStack.Peek().Type != TokenType.LeftParenthesis && OperatorPrecedence[operatorStack.Peek().Type] >= OperatorPrecedence[token.Type])
-					{
-						outputQueue.Enqueue(operatorStack.Pop());
-					}
-					operatorStack.Push(token);
-					break;
-			}
-		}
-		while (operatorStack.Count > 0)
-		{
-			outputQueue.Enqueue(operatorStack.Pop());
-		}
-		var tagStack = new Stack<FilterBase>();
-		while (outputQueue.Count > 0)
-		{
-			var currentToken = outputQueue.Dequeue();
-			switch (currentToken.Type)
-			{
-				case TokenType.Value:
-					tagStack.Push(new Literal(currentToken.Content!));
-					break;
-				case TokenType.Not:
-					if (tagStack.Count == 0)
-					{
-						exception = new FormatException("Not operator with no operand on stack.");
-						return false;
-					}
-					tagStack.Push(new Not(tagStack.Pop()));
-					break;
-				case TokenType.And:
-					if (tagStack.Count < 2)
-					{
-						exception = new FormatException("And operator with not enough operands on stack.");
-						return false;
-					}
-					tagStack.Push(new And(new FilterBase[] { tagStack.Pop(), tagStack.Pop() }.Reverse()));
-					break;
-				case TokenType.Or:
-					if (tagStack.Count < 2)
-					{
-						exception = new FormatException("Or operator with not enough operands on stack.");
-						return false;
-					}
-					tagStack.Push(new Or(new FilterBase[] { tagStack.Pop(), tagStack.Pop() }.Reverse()));
-					break;
-				default:
-					throw new UnreachableException();
-			}
-		}
-		if (tagStack.Count == 1)
-		{
-			result = tagStack.Pop();
-			exception = null;
-			return true;
-		}
-		else
-		{
-			exception = new FormatException("Incorrect number of tags on the stack after processing.");
-			return false;
-		}
+		return TryReadOr(ref span, out result, out exception);
 	}
 
 	/// <summary>
@@ -206,50 +196,4 @@ public abstract record FilterBase : IParsable<FilterBase>
 	/// <param name="itemTags">A set of strings that represents all tags of the item to match.</param>
 	/// <returns><see langword="true" /> if <paramref name="itemTags" /> matches this <see cref="FilterBase" />; otherwise <see langword="false" />.</returns>
 	public abstract bool IsMatch(IReadOnlyList<string> itemTags);
-
-	private enum TokenType
-	{
-		Value,
-		LeftParenthesis,
-		RightParenthesis,
-		And,
-		Or,
-		Not,
-	}
-
-	private record Token
-	{
-		public static readonly Token LeftParenthesis = new(TokenType.LeftParenthesis);
-
-		public static readonly Token RightParenthesis = new(TokenType.RightParenthesis);
-
-		public static readonly Token And = new(TokenType.And);
-
-		public static readonly Token Or = new(TokenType.Or);
-
-		public static readonly Token Not = new(TokenType.Not);
-
-		public Token(string content)
-		{
-			Type = TokenType.Value;
-			Content = content;
-		}
-
-		private Token(TokenType type)
-		{
-			Type = type;
-		}
-
-		public string? Content
-		{
-			get;
-		}
-
-		public int Length => Type == TokenType.Value ? Content!.Length : 1;
-
-		public TokenType Type
-		{
-			get;
-		}
-	}
 }

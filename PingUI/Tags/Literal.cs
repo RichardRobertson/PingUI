@@ -10,7 +10,7 @@ namespace PingUI.Tags;
 /// <param name="Content">The literal string to match.</param>
 public record Literal(string Content) : FilterBase
 {
-	protected static readonly System.Buffers.SearchValues<char> TokenSeparatorChars = System.Buffers.SearchValues.Create(" \t()&|!\"\'");
+	protected static readonly System.Buffers.SearchValues<char> TokenSeparatorChars = System.Buffers.SearchValues.Create(" \t()&|!\"\'`");
 
 	/// <inheritdoc />
 	public override bool IsMatch(IReadOnlyList<string> itemTags)
@@ -23,13 +23,24 @@ public record Literal(string Content) : FilterBase
 	{
 		if (Content.AsSpan().IndexOfAny(TokenSeparatorChars) != -1)
 		{
-			if (Content.Contains('\"'))
+			var quote = Content.Contains('\"');
+			var apostrophe = Content.Contains('\'');
+			var backtick = Content.Contains('`');
+			if (!quote)
+			{
+				return $"\"{Content}\"";
+			}
+			else if (!apostrophe)
 			{
 				return $"\'{Content}\'";
 			}
+			else if (!backtick)
+			{
+				return $"`{Content}`";
+			}
 			else
 			{
-				return $"\"{Content}\"";
+				throw new FormatException("Cannot display a Literal that contains all three of \" (quote) \' (apostrophe) ` (backtick)");
 			}
 		}
 		return Content;
