@@ -13,7 +13,7 @@ public record Literal(string Content) : FilterBase
 	protected static readonly System.Buffers.SearchValues<char> TokenSeparatorChars = System.Buffers.SearchValues.Create(" \t()&|!\"\'`");
 
 	/// <inheritdoc />
-	public override bool IsMatch(IReadOnlyList<string> itemTags)
+	public override bool IsMatch(IEnumerable<string> itemTags)
 	{
 		return itemTags.Contains(Content);
 	}

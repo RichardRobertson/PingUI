@@ -9,7 +9,7 @@ namespace PingUI.Tags;
 public record Not(FilterBase Inner) : FilterBase
 {
 	/// <inheritdoc />
-	public override bool IsMatch(IReadOnlyList<string> itemTags)
+	public override bool IsMatch(IEnumerable<string> itemTags)
 	{
 		return !Inner.IsMatch(itemTags);
 	}

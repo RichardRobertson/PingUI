@@ -27,16 +27,9 @@ public record And : FilterBase
 	}
 
 	/// <inheritdoc />
-	public override bool IsMatch(IReadOnlyList<string> itemTags)
+	public override bool IsMatch(IEnumerable<string> itemTags)
 	{
-		foreach (var filter in Filters)
-		{
-			if (!filter.IsMatch(itemTags))
-			{
-				return false;
-			}
-		}
-		return true;
+		return Filters.All(filter => filter.IsMatch(itemTags));
 	}
 
 	/// <inheritdoc />

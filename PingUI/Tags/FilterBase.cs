@@ -195,5 +195,5 @@ public abstract record FilterBase : IParsable<FilterBase>
 	/// </summary>
 	/// <param name="itemTags">A set of strings that represents all tags of the item to match.</param>
 	/// <returns><see langword="true" /> if <paramref name="itemTags" /> matches this <see cref="FilterBase" />; otherwise <see langword="false" />.</returns>
-	public abstract bool IsMatch(IReadOnlyList<string> itemTags);
+	public abstract bool IsMatch(IEnumerable<string> itemTags);
 }
