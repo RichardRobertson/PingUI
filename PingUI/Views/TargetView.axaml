@@ -43,11 +43,20 @@
 			<Setter Property="HorizontalAlignment" Value="Center" />
 			<Setter Property="VerticalAlignment" Value="Center" />
 		</Style>
+		<Style Selector="ItemsControl#TagsList:empty">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate>
+						<TextBlock Text="{x:Static i18n:Strings.TargetView_Placeholder_NoTags}" />
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
 		<Style Selector="Expander /template/ ToggleButton#ExpanderHeader">
 			<Setter Property="(ToolTip.Tip)">
 				<Setter.Value>
 					<Template>
-						<ItemsControl ItemsSource="{Binding Tags}">
+						<ItemsControl x:Name="TagsList" ItemsSource="{Binding Tags}">
 							<ItemsControl.ItemsPanel>
 								<ItemsPanelTemplate>
 									<WrapPanel />

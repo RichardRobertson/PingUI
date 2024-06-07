@@ -44,6 +44,7 @@
 		"TargetView_ToolTip_PingCount": "Number of total pings",
 		"TargetView_ToolTip_SuccessesOutOfPings": "Number of successful pings / number of total pings",
 		"TargetView_ToolTip_PercentSuccess": "Percentage of pings that were successful",
+		"TargetView_Placeholder_NoTags": "No tags",
 		// TimeSpanExtensions
 		"TimeSpanExtensions_Separator": ", ",
 		"TimeSpanExtensions_Hour": "hour",
