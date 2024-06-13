@@ -33,6 +33,7 @@
 		"Dialog_Yes": "Yes",
 		"Dialog_No": "No",
 		"Dialog_Go": "Go",
+		"Dialog_Clear": "Clear",
 		// TargetView
 		"TargetView_Menu_Edit": "Edit",
 		"TargetView_Menu_Clear": "Clear History",
@@ -63,10 +64,13 @@
 		"MainWindow_Error_CheckForUpdatesAsync": "Error occurred while checking for updates online.",
 		"MainWindow_Menu_PlayAll": "Start pinging all",
 		"MainWindow_Menu_PauseAll": "Stop pinging all",
+		"MainWindow_Menu_PlayAllFiltered": "Start pinging all that match filter",
+		"MainWindow_Menu_PauseAllFiltered": "Stop pinging all that match filter",
 		"MainWindow_Menu_Settings": "Settings",
 		"MainWindow_Menu_DeleteAll": "Delete all targets",
 		"MainWindow_Menu_DetailsView": "Details view",
 		"MainWindow_Menu_CondensedView": "Condensed view",
+		"MainWindow_Help_FilterInstructions": "Tags with spaces or special symbols must include quotes.\n\nQuoted tags can be surrounded with \"quotes\" 'apostrophes' or `backticks`.\n\nRegular expressions can be entered by surrounding with /slashes/.\n\nUse & (ampersand = and) operator to search for multiple tags on one target i.e. (a & b).\n\nUse | (vertical bar = or) operator to search for at least one of a set of tags on a target i.e. (a | b).\n\nUse ! (exclamation point = not) operator to do the opposite i.e. (!a).\n\nCan use parenthesis to group operations.",
 		// DialogErrorReporterView
 		"DialogErrorReporterView_Title": "Error Report",
 		"DialogErrorReporterView_Copy": "Copy to clipboard",

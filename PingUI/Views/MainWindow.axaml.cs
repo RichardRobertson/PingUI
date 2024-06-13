@@ -1,4 +1,5 @@
 using System;
+using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -72,5 +73,13 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 	private void CloseWindowButton_Click(object? sender, RoutedEventArgs e)
 	{
 		Close();
+	}
+
+	private async void OnFilterFlyoutClosedAsync(object? sender, EventArgs e)
+	{
+		if (ViewModel?.RefreshFilterTextCommand is { } command && await command.CanExecute.FirstAsync())
+		{
+			await command.Execute();
+		}
 	}
 }

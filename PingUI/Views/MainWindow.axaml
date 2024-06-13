@@ -52,6 +52,9 @@
 			<Setter Property="(ToolTip.Tip)"
 				Value="{x:Static i18n:Strings.MainWindow_ToolTip_Unpin}" />
 		</Style>
+		<Style Selector="Button.Accent">
+			<Setter Property="Background" Value="{DynamicResource SystemAccentColor}" />
+		</Style>
 	</Window.Styles>
 	<dialogHost:DialogHost CloseOnClickAway="True">
 		<SplitView>
@@ -127,6 +130,31 @@
 								</Grid>
 							</Button>
 							<Separator />
+							<Button Command="{Binding StartPingingAllFilteredCommand}"
+								IsVisible="{Binding IsFiltered}">
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="Auto" SharedSizeGroup="Icon" />
+										<ColumnDefinition />
+									</Grid.ColumnDefinitions>
+									<ic:SymbolIcon Symbol="Play" />
+									<TextBlock
+										Text="{x:Static i18n:Strings.MainWindow_Menu_PlayAllFiltered}" />
+								</Grid>
+							</Button>
+							<Button Command="{Binding StopPingingAllFilteredCommand}"
+								IsVisible="{Binding IsFiltered}">
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="Auto" SharedSizeGroup="Icon" />
+										<ColumnDefinition />
+									</Grid.ColumnDefinitions>
+									<ic:SymbolIcon Symbol="Pause" />
+									<TextBlock
+										Text="{x:Static i18n:Strings.MainWindow_Menu_PauseAllFiltered}" />
+								</Grid>
+							</Button>
+							<Separator IsVisible="{Binding IsFiltered}" />
 							<Button Command="{Binding SetDetailsViewCommand}">
 								<Grid>
 									<Grid.ColumnDefinitions>
@@ -183,6 +211,40 @@
 							DockPanel.Dock="Left">
 							<ic:SymbolIcon Symbol="Navigation" />
 						</ToggleButton>
+						<Button Classes="Chrome" Classes.Accent="{Binding IsFiltered}"
+							DockPanel.Dock="Left">
+							<Button.Styles>
+								<Style Selector="FlyoutPresenter">
+									<Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
+										Value="Disabled" />
+								</Style>
+							</Button.Styles>
+							<Button.Flyout>
+								<Flyout Placement="BottomEdgeAlignedLeft"
+									Closed="OnFilterFlyoutClosedAsync">
+									<StackPanel MaxWidth="{DynamicResource FlyoutThemeMaxWidth}">
+										<TextBox Text="{Binding TagFilterText}">
+											<TextBox.InnerRightContent>
+												<StackPanel Orientation="Horizontal">
+													<Button Background="DarkGreen" IsDefault="True"
+														Content="{x:Static i18n:Strings.Dialog_Apply}"
+														Command="{Binding FilterTagsCommand}" />
+													<Button Background="DarkRed"
+														Content="{x:Static i18n:Strings.Dialog_Clear}"
+														Command="{Binding ClearFilterCommand}" />
+												</StackPanel>
+											</TextBox.InnerRightContent>
+										</TextBox>
+										<TextBlock TextWrapping="Wrap" Margin="4" Foreground="Red"
+											Text="{Binding FilterTagsError}"
+											IsVisible="{Binding FilterTagsError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+										<TextBlock TextWrapping="Wrap" Margin="4"
+											Text="{x:Static i18n:Strings.MainWindow_Help_FilterInstructions}" />
+									</StackPanel>
+								</Flyout>
+							</Button.Flyout>
+							<ic:SymbolIcon Symbol="Filter" />
+						</Button>
 						<Button Click="CloseWindowButton_Click" Classes="Chrome Exit"
 							DockPanel.Dock="Right">
 							<ic:SymbolIcon Symbol="Dismiss" />

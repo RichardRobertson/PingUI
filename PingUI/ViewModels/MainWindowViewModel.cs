@@ -10,12 +10,14 @@ using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using DialogHostAvalonia;
+using DynamicData;
 using DynamicData.Binding;
-using PingUI.Collections;
+using DynamicData.Kernel;
 using PingUI.Extensions;
 using PingUI.I18N;
 using PingUI.Models;
 using PingUI.ServiceModels;
+using PingUI.Tags;
 using ReactiveUI;
 using Splat;
 
@@ -37,11 +39,6 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 	private readonly IConfiguration configuration;
 
 	/// <summary>
-	/// Backing store for <see cref="Targets" />.
-	/// </summary>
-	private ReadOnlyObservableMappedCollection<Target, ObservableCollection<Target>, TargetViewModel>? _Targets;
-
-	/// <summary>
 	/// Backing store for <see cref="ViewStyle" />.
 	/// </summary>
 	private MainViewStyle _ViewStyle;
@@ -56,21 +53,44 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 	/// </summary>
 	private bool _IsCondensedView;
 
+	private string? _TagFilterText;
+
+	private FilterBase? _TagFilter;
+
+	private string? _FilterTagsError;
+
+	private bool _IsFiltered;
+
+	private readonly SourceList<Target> targetsList;
+
+	private ReadOnlyObservableCollection<TargetViewModel>? _Targets;
+
 	/// <summary>
 	/// Initializes a new <see cref="MainWindowViewModel" />.
 	/// </summary>
 	public MainWindowViewModel()
 	{
 		configuration = Locator.Current.GetRequiredService<IConfiguration>();
+		targetsList = new SourceList<Target>(configuration.Targets.ToObservableChangeSet());
 		this.WhenActivated(disposables =>
 		{
-			Targets = new ReadOnlyObservableMappedCollection<Target, ObservableCollection<Target>, TargetViewModel>(
-				configuration.Targets,
-				t => new TargetViewModel(t),
-				(t, tvm) => tvm.Target = t,
-				tvm => tvm.Target);
-			Targets.DisposeWith(disposables);
-			Disposable.Create(() => Targets = null).DisposeWith(disposables);
+			targetsList.Connect()
+				.Transform<Target, TargetViewModel>(TransformTargetToTargetViewModel)
+				.Filter(this.WhenAnyValue(vm => vm.IsFiltered).Select(GetFilter))
+				.Bind(out var transformedList)
+				.Subscribe()
+				.DisposeWith(disposables);
+			Targets = transformedList;
+			Disposable.Create(
+				() =>
+				{
+					foreach (var target in Targets)
+					{
+						target.IsEnabled = false;
+					}
+					Targets = null;
+				})
+				.DisposeWith(disposables);
 			Observable.FromAsync(CheckForUpdatesAsync).Subscribe().DisposeWith(disposables);
 			this.WhenValueChanged(vm => vm.ViewStyle)
 				.Subscribe(viewStyle =>
@@ -154,9 +174,91 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 				}
 			}
 		});
+		StartPingingAllFilteredCommand = ReactiveCommand.Create(
+			() =>
+			{
+				if (_Targets is { } targets)
+				{
+					foreach (var target in targets)
+					{
+						if (_TagFilter!.IsMatch(target.Tags))
+						{
+							target.IsEnabled = true;
+						}
+					}
+				}
+			},
+			this.WhenValueChanged(vm => vm.IsFiltered));
+		StopPingingAllFilteredCommand = ReactiveCommand.Create(
+			() =>
+			{
+				if (_Targets is { } targets)
+				{
+					foreach (var target in targets)
+					{
+						if (_TagFilter!.IsMatch(target.Tags))
+						{
+							target.IsEnabled = false;
+						}
+					}
+				}
+			},
+			this.WhenValueChanged(vm => vm.IsFiltered));
 		_ViewStyle = MainViewStyle.Details;
 		SetDetailsViewCommand = ReactiveCommand.Create(() => { ViewStyle = MainViewStyle.Details; }, this.WhenValueChanged(vm => vm.IsDetailsView).Select(isDetailsView => !isDetailsView));
 		SetCondensedViewCommand = ReactiveCommand.Create(() => { ViewStyle = MainViewStyle.Condensed; }, this.WhenValueChanged(vm => vm.IsCondensedView).Select(isCondensedView => !isCondensedView));
+		FilterTagsCommand = ReactiveCommand.Create(() =>
+		{
+			_TagFilter = null;
+			FilterTagsError = null;
+			IsFiltered = false;
+			if (string.IsNullOrWhiteSpace(TagFilterText))
+			{
+				return;
+			}
+			try
+			{
+				_TagFilter = FilterBase.Parse(TagFilterText, null);
+				TagFilterText = _TagFilter.ToString();
+				IsFiltered = true;
+			}
+			catch (Exception ex)
+			{
+				FilterTagsError = ex.Message;
+			}
+		});
+		ClearFilterCommand = ReactiveCommand.Create(() =>
+		{
+			_TagFilter = null;
+			FilterTagsError = null;
+			TagFilterText = null;
+			IsFiltered = false;
+		});
+		RefreshFilterTextCommand = ReactiveCommand.Create(() => { TagFilterText = _TagFilter?.ToString(); });
+	}
+
+	private TargetViewModel TransformTargetToTargetViewModel(Target target, Optional<TargetViewModel> previous)
+	{
+		TargetViewModel targetViewModel;
+		if (previous.HasValue)
+		{
+			Console.WriteLine("[{0}] Updated target on existing view model", DateTime.Now);
+			targetViewModel = previous.Value;
+			targetViewModel.Target = target;
+		}
+		else
+		{
+			Console.WriteLine("[{0}] Created new view model", DateTime.Now);
+			targetViewModel = new TargetViewModel(target);
+		}
+		return targetViewModel;
+	}
+
+	private Func<TargetViewModel, bool> GetFilter(bool shouldFilter)
+	{
+		return shouldFilter && _TagFilter is not null
+			? targetViewModel => _TagFilter.IsMatch(targetViewModel.Tags)
+			: _ => true;
 	}
 
 	/// <summary>
@@ -198,7 +300,7 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 	/// <summary>
 	/// Gets the list of <see cref="Target" /> view models.
 	/// </summary>
-	public ReadOnlyObservableMappedCollection<Target, ObservableCollection<Target>, TargetViewModel>? Targets
+	public ReadOnlyObservableCollection<TargetViewModel>? Targets
 	{
 		get => _Targets;
 		private set => this.RaiseAndSetIfChanged(ref _Targets, value);
@@ -232,6 +334,22 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 	/// A command to stop pinging all targets.
 	/// </summary>
 	public ReactiveCommand<Unit, Unit> StopPingingAllCommand
+	{
+		get;
+	}
+
+	/// <summary>
+	/// A command to start pinging all targets that match the current filter.
+	/// </summary>
+	public ReactiveCommand<Unit, Unit> StartPingingAllFilteredCommand
+	{
+		get;
+	}
+
+	/// <summary>
+	/// A command to stop pinging all targets that match the current filter.
+	/// </summary>
+	public ReactiveCommand<Unit, Unit> StopPingingAllFilteredCommand
 	{
 		get;
 	}
@@ -302,6 +420,39 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 	{
 		get => _IsCondensedView;
 		private set => this.RaiseAndSetIfChanged(ref _IsCondensedView, value);
+	}
+
+	public string? TagFilterText
+	{
+		get => _TagFilterText;
+		set => this.RaiseAndSetIfChanged(ref _TagFilterText, value);
+	}
+
+	public ReactiveCommand<Unit, Unit> FilterTagsCommand
+	{
+		get;
+	}
+
+	public ReactiveCommand<Unit, Unit> ClearFilterCommand
+	{
+		get;
+	}
+
+	public ReactiveCommand<Unit, Unit> RefreshFilterTextCommand
+	{
+		get;
+	}
+
+	public string? FilterTagsError
+	{
+		get => _FilterTagsError;
+		set => this.RaiseAndSetIfChanged(ref _FilterTagsError, value);
+	}
+
+	public bool IsFiltered
+	{
+		get => _IsFiltered;
+		set => this.RaiseAndSetIfChanged(ref _IsFiltered, value);
 	}
 
 	/// <inheritdoc />

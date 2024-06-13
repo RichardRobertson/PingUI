@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Visible counter on the right edge of the ping result history if a given status repeats
 - Can use enter and escape to confirm or cancel dialogs respectively ([#19](https://github.com/RichardRobertson/PingUI/issues/19))
+- Target tagging system ([#20](https://github.com/RichardRobertson/PingUI/issues/20))
+	- Tag entry bar on edit target view
+	- Tags display in tooltip when hovering over a target in details view
+	- Filter button added to top of window
 
 ### Changed
 
