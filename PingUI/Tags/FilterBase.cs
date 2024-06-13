@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace PingUI.Tags;
 
@@ -52,7 +51,8 @@ public abstract record FilterBase : IParsable<FilterBase>
 			literal = anyNonSeparatorCharacter, {anyNonSeparatorCharacter}
 				| '"', anyNonQuoteCharacter, {anyNonQuoteCharacter}, '"'
 				| "'", anyNonApostropheCharacter, {anyNonApostropheCharacter}, "'"
-				| "`", anyNonBacktickCharacter, {anyNonBacktickCharacter}, "`";
+				| "`", anyNonBacktickCharacter, {anyNonBacktickCharacter}, "`"
+				| "/", anyNonOrEscapedSlashCharacter, {anyNonOrEscapedSlashCharacter}, "/";
 		*/
 
 		static bool TryReadPrimary(ref ReadOnlySpan<char> span, [NotNullWhen(true)] out FilterBase? result, [NotNullWhen(false)] out Exception? exception)
@@ -102,6 +102,43 @@ public abstract record FilterBase : IParsable<FilterBase>
 				}
 				result = new Literal(new string(span[1..nextQuote]));
 				span = span[(nextQuote + 1)..];
+			}
+			else if (span[0] == '/')
+			{
+				var nextSlash = -1;
+				var escaped = false;
+				for (var i = 1; i < span.Length; i++)
+				{
+					if (span[i] == '\\')
+					{
+						escaped = !escaped;
+					}
+					else if (span[i] == '/' && !escaped)
+					{
+						nextSlash = i;
+						break;
+					}
+					else if (escaped)
+					{
+						escaped = false;
+					}
+				}
+				if (nextSlash == -1)
+				{
+					result = null;
+					exception = new FormatException("Missing end slash");
+					return false;
+				}
+				try
+				{
+					result = new RegExp(new Regex(new string(span[1..nextSlash])));
+					span = span[(nextSlash + 1)..];
+				}
+				catch (Exception ex)
+				{
+					exception = ex;
+					return false;
+				}
 			}
 			else
 			{
