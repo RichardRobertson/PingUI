@@ -13,6 +13,7 @@ using DialogHostAvalonia;
 using DynamicData;
 using DynamicData.Binding;
 using DynamicData.Kernel;
+using PingUI.Collections;
 using PingUI.Extensions;
 using PingUI.I18N;
 using PingUI.Models;
@@ -39,6 +40,11 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 	private readonly IConfiguration configuration;
 
 	/// <summary>
+	/// Backing store for <see cref="Targets" />.
+	/// </summary>
+	private ReadOnlyObservableFilteredCollection<ReadOnlyObservableMappedCollection<Target, ObservableCollection<Target>, TargetViewModel>, TargetViewModel>? _Targets;
+
+	/// <summary>
 	/// Backing store for <see cref="ViewStyle" />.
 	/// </summary>
 	private MainViewStyle _ViewStyle;
@@ -61,36 +67,23 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 
 	private bool _IsFiltered;
 
-	private readonly SourceList<Target> targetsList;
-
-	private ReadOnlyObservableCollection<TargetViewModel>? _Targets;
-
 	/// <summary>
 	/// Initializes a new <see cref="MainWindowViewModel" />.
 	/// </summary>
 	public MainWindowViewModel()
 	{
 		configuration = Locator.Current.GetRequiredService<IConfiguration>();
-		targetsList = new SourceList<Target>(configuration.Targets.ToObservableChangeSet());
 		this.WhenActivated(disposables =>
 		{
-			targetsList.Connect()
-				.Transform<Target, TargetViewModel>(TransformTargetToTargetViewModel)
-				.Filter(this.WhenAnyValue(vm => vm.IsFiltered).Select(GetFilter))
-				.Bind(out var transformedList)
-				.Subscribe()
-				.DisposeWith(disposables);
-			Targets = transformedList;
-			Disposable.Create(
-				() =>
-				{
-					foreach (var target in Targets)
-					{
-						target.IsEnabled = false;
-					}
-					Targets = null;
-				})
-				.DisposeWith(disposables);
+			Targets = new ReadOnlyObservableFilteredCollection<ReadOnlyObservableMappedCollection<Target, ObservableCollection<Target>, TargetViewModel>, TargetViewModel>(
+				new ReadOnlyObservableMappedCollection<Target, ObservableCollection<Target>, TargetViewModel>(
+					configuration.Targets,
+					t => new TargetViewModel(t),
+					(t, tvm) => tvm.Target = t,
+					tvm => tvm.Target),
+				this.WhenAnyValue(vm => vm.IsFiltered).Select(GetFilter));
+			Targets.DisposeWith(disposables);
+			Disposable.Create(() => Targets = null).DisposeWith(disposables);
 			Observable.FromAsync(CheckForUpdatesAsync).Subscribe().DisposeWith(disposables);
 			this.WhenValueChanged(vm => vm.ViewStyle)
 				.Subscribe(viewStyle =>
@@ -237,23 +230,6 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 		RefreshFilterTextCommand = ReactiveCommand.Create(() => { TagFilterText = _TagFilter?.ToString(); });
 	}
 
-	private TargetViewModel TransformTargetToTargetViewModel(Target target, Optional<TargetViewModel> previous)
-	{
-		TargetViewModel targetViewModel;
-		if (previous.HasValue)
-		{
-			Console.WriteLine("[{0}] Updated target on existing view model", DateTime.Now);
-			targetViewModel = previous.Value;
-			targetViewModel.Target = target;
-		}
-		else
-		{
-			Console.WriteLine("[{0}] Created new view model", DateTime.Now);
-			targetViewModel = new TargetViewModel(target);
-		}
-		return targetViewModel;
-	}
-
 	private Func<TargetViewModel, bool> GetFilter(bool shouldFilter)
 	{
 		return shouldFilter && _TagFilter is not null
@@ -300,7 +276,7 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 	/// <summary>
 	/// Gets the list of <see cref="Target" /> view models.
 	/// </summary>
-	public ReadOnlyObservableCollection<TargetViewModel>? Targets
+	public ReadOnlyObservableFilteredCollection<ReadOnlyObservableMappedCollection<Target, ObservableCollection<Target>, TargetViewModel>, TargetViewModel>? Targets
 	{
 		get => _Targets;
 		private set => this.RaiseAndSetIfChanged(ref _Targets, value);

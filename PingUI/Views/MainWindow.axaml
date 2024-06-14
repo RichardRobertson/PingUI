@@ -308,7 +308,8 @@
 								<Setter Property="(i:Interaction.Behaviors)">
 									<i:BehaviorCollectionTemplate>
 										<i:BehaviorCollection>
-											<behaviors:DragArrangeBehavior />
+											<behaviors:DragArrangeBehavior
+												IsEnabled="{Binding !IsFiltered}" />
 										</i:BehaviorCollection>
 									</i:BehaviorCollectionTemplate>
 								</Setter>

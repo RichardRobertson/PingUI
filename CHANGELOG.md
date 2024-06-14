@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 	- Tag entry bar on edit target view
 	- Tags display in tooltip when hovering over a target in details view
 	- Filter button added to top of window
+	- Drag arrange is disabled while list is filtered
 
 ### Changed
 

@@ -31,6 +31,11 @@ public class DragArrangeBehavior : Behavior
 	public static readonly StyledProperty<double> HighSpeedScrollMultiplierProperty = AvaloniaProperty.Register<DragArrangeBehavior, double>(nameof(HighSpeedScrollMultiplier), 4.0);
 
 	/// <summary>
+	/// Defines the <see cref="IsEnabled" /> property.
+	/// </summary>
+	public static readonly StyledProperty<bool> IsEnabledProperty = AvaloniaProperty.Register<DragArrangeBehavior, bool>(nameof(IsEnabled), true);
+
+	/// <summary>
 	/// Indicates that a drag may occur.
 	/// </summary>
 	private bool _enableDrag;
@@ -93,6 +98,12 @@ public class DragArrangeBehavior : Behavior
 		set => SetValue(HighSpeedScrollMultiplierProperty, value);
 	}
 
+	public bool IsEnabled
+	{
+		get => GetValue(IsEnabledProperty);
+		set => SetValue(IsEnabledProperty, value);
+	}
+
 	/// <inheritdoc />
 	protected override void OnAttached()
 	{
@@ -125,7 +136,7 @@ public class DragArrangeBehavior : Behavior
 	private void PointerPressed(object? sender, PointerPressedEventArgs e)
 	{
 		var properties = e.GetCurrentPoint(AssociatedObject as Control).Properties;
-		if (properties.IsLeftButtonPressed && AssociatedObject is Control { Parent: ItemsControl itemsControl })
+		if (IsEnabled && properties.IsLeftButtonPressed && AssociatedObject is Control { Parent: ItemsControl itemsControl })
 		{
 			_enableDrag = true;
 			_dragStarted.Disposable = null;
