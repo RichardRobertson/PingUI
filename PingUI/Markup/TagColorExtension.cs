@@ -8,7 +8,6 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using PingUI.Extensions;
 using PingUI.Models;
-using PingUI.Reactive;
 using PingUI.ServiceModels;
 using ReactiveUI;
 using Splat;
@@ -20,17 +19,15 @@ namespace PingUI.Markup;
 /// </summary>
 public class TagColorExtension : MarkupExtension
 {
-	private static readonly Lazy<CollectionObservable<ObservableCollection<Target>, ImmutableSortedSet<string>>> TargetCollectionTagsObservable;
+	private static readonly Lazy<IObservable<ImmutableSortedSet<string>>> TargetCollectionTagsObservable;
 
 	static TagColorExtension()
 	{
 		Latest = ImmutableSortedSet<string>.Empty;
-		TargetCollectionTagsObservable = new Lazy<CollectionObservable<ObservableCollection<Target>, ImmutableSortedSet<string>>>(
+		TargetCollectionTagsObservable = new Lazy<IObservable<ImmutableSortedSet<string>>>(
 			static () =>
 			{
-				var observable = new CollectionObservable<ObservableCollection<Target>, ImmutableSortedSet<string>>(
-					Locator.Current.GetRequiredService<IConfiguration>().Targets,
-					collection => collection.SelectMany(target => target.Tags).ToImmutableSortedSet());
+				var observable = Locator.Current.GetRequiredService<IConfiguration>().Targets.WhenCollectionChanged<ObservableCollection<Target>, Target, ImmutableSortedSet<string>>(collection => collection.SelectMany(target => target.Tags).ToImmutableSortedSet());
 				observable.SubscribeOn(RxApp.MainThreadScheduler)
 					.Subscribe(latest => Latest = latest);
 				return observable;
