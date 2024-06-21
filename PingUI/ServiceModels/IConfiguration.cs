@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using PingUI.Interop;
 using PingUI.Models;
 
@@ -7,7 +8,7 @@ namespace PingUI.ServiceModels;
 /// <summary>
 /// Represents the base configuration of the application.
 /// </summary>
-public interface IConfiguration
+public interface IConfiguration : INotifyPropertyChanged, INotifyPropertyChanging
 {
 	/// <summary>
 	/// The <see cref="Target" /> values that need to be remembered.

@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using PingUI.Extensions;
@@ -37,6 +40,12 @@ public class LocalOrAppDataJsonConfiguration : IConfiguration
 	/// </summary>
 	public static readonly string LocalConfigurationPath = Path.Combine(AppContext.BaseDirectory, ConfigurationFileName);
 
+	private bool _TopMost;
+
+	private bool? _CheckOnlineForUpdates;
+
+	private WindowPlacement.WindowPlacementRecord? _WindowBounds;
+
 	/// <inheritdoc />
 	public ObservableCollection<Target> Targets
 	{
@@ -56,23 +65,29 @@ public class LocalOrAppDataJsonConfiguration : IConfiguration
 	/// <inheritdoc />
 	public bool Topmost
 	{
-		get;
-		set;
+		get => _TopMost;
+		set => RaiseAndSetIfChanged(ref _TopMost, value);
 	}
 
 	/// <inheritdoc />
 	public bool? CheckOnlineForUpdates
 	{
-		get;
-		set;
+		get => _CheckOnlineForUpdates;
+		set => RaiseAndSetIfChanged(ref _CheckOnlineForUpdates, value);
 	}
 
 	/// <inheritdoc />
 	public WindowPlacement.WindowPlacementRecord? WindowBounds
 	{
-		get;
-		set;
+		get => _WindowBounds;
+		set => RaiseAndSetIfChanged(ref _WindowBounds, value);
 	}
+
+	/// <inheritdoc />
+	public event PropertyChangedEventHandler? PropertyChanged;
+
+	/// <inheritdoc />
+	public event PropertyChangingEventHandler? PropertyChanging;
 
 	/// <summary>
 	/// Loads the configuration from the stored JSON or returns a new <see cref="LocalOrAppDataJsonConfiguration" /> if the file does not exist or a loading error occurs.
@@ -120,5 +135,16 @@ public class LocalOrAppDataJsonConfiguration : IConfiguration
 		new FileInfo(ConfigurationPath).Directory?.Create();
 		using var file = File.Open(ConfigurationPath, FileMode.Create);
 		JsonSerializer.Serialize(file, this, JsonContext.Instance.LocalOrAppDataJsonConfiguration);
+	}
+
+	private void RaiseAndSetIfChanged<TRet>(ref TRet backingField, TRet newValue, [CallerMemberName] string? propertyName = null)
+	{
+		if (EqualityComparer<TRet>.Default.Equals(backingField, newValue))
+		{
+			return;
+		}
+		PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(propertyName));
+		backingField = newValue;
+		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 	}
 }
