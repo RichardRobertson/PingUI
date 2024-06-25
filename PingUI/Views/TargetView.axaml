@@ -4,7 +4,6 @@
 	xmlns:ic="using:FluentIcons.Avalonia.Fluent"
 	xmlns:i18n="using:PingUI.I18N"
 	xmlns:v="using:PingUI.Views"
-	xmlns:m="using:PingUI.Markup"
 	x:Class="PingUI.Views.TargetView"
 	x:DataType="vm:TargetViewModel">
 	<UserControl.Styles>
@@ -62,14 +61,6 @@
 									<WrapPanel />
 								</ItemsPanelTemplate>
 							</ItemsControl.ItemsPanel>
-							<ItemsControl.ItemTemplate>
-								<DataTemplate>
-									<Border Background="{m:TagColor}" CornerRadius="12" Margin="2"
-										Padding="8 2">
-										<TextBlock Text="{Binding}" VerticalAlignment="Center" />
-									</Border>
-								</DataTemplate>
-							</ItemsControl.ItemTemplate>
 						</ItemsControl>
 					</Template>
 				</Setter.Value>

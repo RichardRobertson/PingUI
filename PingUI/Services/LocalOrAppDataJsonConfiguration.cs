@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -46,6 +47,8 @@ public class LocalOrAppDataJsonConfiguration : IConfiguration
 
 	private WindowPlacement.WindowPlacementRecord? _WindowBounds;
 
+	private ImmutableArray<AutomaticTagEntry> _AutomaticTagEntries;
+
 	/// <inheritdoc />
 	public ObservableCollection<Target> Targets
 	{
@@ -81,6 +84,13 @@ public class LocalOrAppDataJsonConfiguration : IConfiguration
 	{
 		get => _WindowBounds;
 		set => RaiseAndSetIfChanged(ref _WindowBounds, value);
+	}
+
+	/// <inheritdoc />
+	public ImmutableArray<AutomaticTagEntry> AutomaticTagEntries
+	{
+		get => _AutomaticTagEntries;
+		set => RaiseAndSetIfChanged(ref _AutomaticTagEntries, value);
 	}
 
 	/// <inheritdoc />

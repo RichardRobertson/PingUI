@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive;
 using DialogHostAvalonia;
 using PingUI.Extensions;
@@ -23,7 +24,7 @@ public class DeleteTargetViewModel : ViewModelBase
 		ArgumentNullException.ThrowIfNull(target);
 		Target = target;
 		CoolDown = target.CoolDown.ToWords();
-		Tags = target.Tags;
+		Tags = target.Tags.Select(tag => new TargetTagViewModel(new TargetTag(tag, false)));
 		CancelDialogCommand = ReactiveCommand.Create(() => DialogHost.GetDialogSession(null)?.Close());
 		AcceptDialogCommand = ReactiveCommand.Create(() => DialogHost.GetDialogSession(null)?.Close(true));
 	}
@@ -47,7 +48,7 @@ public class DeleteTargetViewModel : ViewModelBase
 	/// <summary>
 	/// The tags specified on <see cref="Target" />.
 	/// </summary>
-	public IEnumerable<string> Tags
+	public IEnumerable<TargetTagViewModel> Tags
 	{
 		get;
 	}

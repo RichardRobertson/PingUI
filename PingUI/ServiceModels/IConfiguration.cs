@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using PingUI.Interop;
@@ -48,6 +49,16 @@ public interface IConfiguration : INotifyPropertyChanged, INotifyPropertyChangin
 	/// </summary>
 	/// <value>A <see cref="WindowPlacement" /> value to save and restore; otherwise <see langword="null" /> to not save and restore.</value>
 	WindowPlacement.WindowPlacementRecord? WindowBounds
+	{
+		get;
+		set;
+	}
+
+	/// <summary>
+	/// A collection of <see cref="AutomaticTagEntry" /> values indicating tags that should be applied to matching targets.
+	/// </summary>
+	/// <value>An <see cref="ImmutableArray{T}" /> of <see cref="AutomaticTagEntry" /> values.</value>
+	ImmutableArray<AutomaticTagEntry> AutomaticTagEntries
 	{
 		get;
 		set;

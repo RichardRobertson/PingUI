@@ -71,7 +71,22 @@ public class EditTargetViewModel : ViewModelBase
 		Hours = target?.CoolDown.Hours ?? 0;
 		Minutes = target?.CoolDown.Minutes ?? 0;
 		Seconds = target?.CoolDown.Seconds ?? 0;
-		Tags = new ObservableCollectionExtended<string>(target?.Tags ?? Enumerable.Empty<string>());
+		Tags = [];
+		Tags.ActOnEveryObject(
+			vm =>
+			{
+				vm.AllowDelete = true;
+				vm.DeleteSelfInteraction.RegisterHandler(context =>
+				{
+					Tags.Remove(context.Input);
+					context.SetOutput(Unit.Default);
+				});
+			},
+			_ => { });
+		if (target is not null)
+		{
+			Tags.AddRange(target.Tags.Select(tag => new TargetTagViewModel(new TargetTag(tag, false))));
+		}
 		CancelDialogCommand = ReactiveCommand.Create(() => DialogHost.GetDialogSession(null)?.Close());
 		AcceptDialogCommand = ReactiveCommand.Create(
 			() =>
@@ -81,7 +96,7 @@ public class EditTargetViewModel : ViewModelBase
 							IPAddress.Parse(Address!),
 							Label,
 							new TimeSpan(_Hours ?? 0, _Minutes ?? 0, _Seconds ?? 0),
-							Tags.ToImmutableSortedSet())),
+							Tags.Select(tag => tag.Text).ToImmutableSortedSet())),
 			ValidationContext.Valid);
 		_IPSuggestions = [];
 		IPSuggestions = new ReadOnlyObservableCollection<IPAddress>(_IPSuggestions);
@@ -228,8 +243,8 @@ public class EditTargetViewModel : ViewModelBase
 	/// <summary>
 	/// The tags to associate with this target.
 	/// </summary>
-	/// <value>A collection of zero or more strings.</value>
-	public ObservableCollectionExtended<string> Tags
+	/// <value>A collection of zero or more tags.</value>
+	public ObservableCollectionExtended<TargetTagViewModel> Tags
 	{
 		get;
 	}

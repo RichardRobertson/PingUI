@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Reactive;
@@ -174,7 +175,7 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 				{
 					foreach (var target in targets)
 					{
-						if (_TagFilter!.IsMatch(target.Tags))
+						if (_TagFilter!.IsMatch(target.Tags.Select(tag => tag.Text)))
 						{
 							target.IsEnabled = true;
 						}
@@ -189,7 +190,7 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 				{
 					foreach (var target in targets)
 					{
-						if (_TagFilter!.IsMatch(target.Tags))
+						if (_TagFilter!.IsMatch(target.Tags.Select(tag => tag.Text)))
 						{
 							target.IsEnabled = false;
 						}
@@ -233,7 +234,7 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 	private Func<TargetViewModel, bool> GetFilter(bool shouldFilter)
 	{
 		return shouldFilter && _TagFilter is not null
-			? targetViewModel => _TagFilter.IsMatch(targetViewModel.Tags)
+			? targetViewModel => _TagFilter.IsMatch(targetViewModel.Tags.Select(tag => tag.Text))
 			: _ => true;
 	}
 

@@ -92,6 +92,10 @@
 		"SettingsView_RememberWindowLocation": "Remember window location?",
 		// TagInputControl
 		"TagInputControl_Watermark": "Type a tag and press enter",
+		// AutomaticTagEntryViewModel
+		"AutomaticTagEntryViewModel_ContentBlank": "Content must have a value",
+		"AutomaticTagEntryViewModel_TagBlank": "Tag must have a value",
+		"AutomaticTagEntryViewModel_ContentInvalidRegex": "Content must be a valid regular expression when Type is regex",
 		// System.Net.NetworkInformation.IPStatus enum
 		"System_Net_NetworkInformation_IPStatus_Success": "Success",
 		"System_Net_NetworkInformation_IPStatus_DestinationNetworkUnreachable": "Destination Network Unreachable",

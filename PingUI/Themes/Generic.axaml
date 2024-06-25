@@ -23,20 +23,6 @@
 				</ItemsPanelTemplate>
 			</Setter.Value>
 		</Setter>
-		<Setter Property="ItemTemplate">
-			<DataTemplate DataType="s:String">
-				<Border Background="{m:TagColor}" CornerRadius="12" Margin="2" Padding="8 2">
-					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="{Binding}" VerticalAlignment="Center" />
-						<Button
-							Command="{Binding DeleteItemCommand, RelativeSource={RelativeSource AncestorType=c:TagInputControl}}"
-							CommandParameter="{Binding}" Padding="0" Background="Transparent">
-							<ic:SymbolIcon Symbol="DismissCircle" IsFilled="True" />
-						</Button>
-					</StackPanel>
-				</Border>
-			</DataTemplate>
-		</Setter>
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate>

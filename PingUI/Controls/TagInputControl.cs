@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
@@ -12,8 +11,8 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.VisualTree;
-using PingUI.Extensions;
-using PingUI.Markup;
+using PingUI.Models;
+using PingUI.ViewModels;
 using ReactiveUI;
 
 namespace PingUI.Controls;
@@ -26,7 +25,7 @@ public class TagInputControl : ItemsControl
 
 	public const string PART_ItemsPresenter = "PART_ItemsPresenter";
 
-	public static readonly DirectProperty<TagInputControl, ReactiveCommand<string, Unit>> DeleteItemCommandProperty = AvaloniaProperty.RegisterDirect<TagInputControl, ReactiveCommand<string, Unit>>(nameof(DeleteItemCommand), tic => tic.DeleteItemCommand);
+	public static readonly DirectProperty<TagInputControl, ReactiveCommand<TargetTagViewModel, Unit>> DeleteItemCommandProperty = AvaloniaProperty.RegisterDirect<TagInputControl, ReactiveCommand<TargetTagViewModel, Unit>>(nameof(DeleteItemCommand), tic => tic.DeleteItemCommand);
 
 	private AutoCompleteBox? _TextBox;
 
@@ -34,15 +33,15 @@ public class TagInputControl : ItemsControl
 
 	public TagInputControl()
 	{
-		DeleteItemCommand = ReactiveCommand.Create<string>(tag =>
+		DeleteItemCommand = ReactiveCommand.Create<TargetTagViewModel>(tag =>
 		{
-			(ItemsSource as IList<string>)?.Remove(tag);
+			(ItemsSource as IList<TargetTagViewModel>)?.Remove(tag);
 			_TextBox?.Focus();
 		});
 		RaisePropertyChanged(DeleteItemCommandProperty, null!, DeleteItemCommand);
 	}
 
-	public ReactiveCommand<string, Unit> DeleteItemCommand
+	public ReactiveCommand<TargetTagViewModel, Unit> DeleteItemCommand
 	{
 		get;
 	}
@@ -72,13 +71,10 @@ public class TagInputControl : ItemsControl
 
 	private void OnTextBoxKeyUp(object? sender, KeyEventArgs e)
 	{
-		if (sender is not AutoCompleteBox)
-		{
-			return;
-		}
 		if (e.Key == Key.Enter)
 		{
 			AddTag();
+			e.Handled = true;
 		}
 	}
 
@@ -108,7 +104,7 @@ public class TagInputControl : ItemsControl
 	private Task<IEnumerable<object>> PopulateSuggestionsAsync(string? searchText, CancellationToken cancellationToken)
 	{
 		return Task.Run<IEnumerable<object>>(
-			() => FuzzierSharp.Process.ExtractTop(searchText, TagColorExtension.Latest)
+			() => FuzzierSharp.Process.ExtractTop(searchText, TargetTag.LatestAllTags)
 				.Select(top => top.Value),
 			cancellationToken);
 	}
@@ -122,7 +118,7 @@ public class TagInputControl : ItemsControl
 	{
 		if (_TextBox is not null && !string.IsNullOrWhiteSpace(_TextBox.Text))
 		{
-			(ItemsSource as IList<string>)?.Add(_TextBox.Text);
+			(ItemsSource as IList<TargetTagViewModel>)?.Add(new TargetTagViewModel(new TargetTag(_TextBox.Text, false)));
 			_TextBox.Text = string.Empty;
 		}
 	}

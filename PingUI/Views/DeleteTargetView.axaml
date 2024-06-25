@@ -2,7 +2,6 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:vm="using:PingUI.ViewModels"
 	xmlns:i18n="using:PingUI.I18N"
-	xmlns:m="using:PingUI.Markup"
 	x:Class="PingUI.Views.DeleteTargetView"
 	x:DataType="vm:DeleteTargetViewModel">
 	<StackPanel>
@@ -31,14 +30,6 @@
 						<WrapPanel />
 					</ItemsPanelTemplate>
 				</ItemsControl.ItemsPanel>
-				<ItemsControl.ItemTemplate>
-					<DataTemplate>
-						<Border Background="{m:TagColor}" CornerRadius="12" Margin="2"
-							Padding="8 2">
-							<TextBlock Text="{Binding}" VerticalAlignment="Center" />
-						</Border>
-					</DataTemplate>
-				</ItemsControl.ItemTemplate>
 			</ItemsControl>
 		</Grid>
 		<StackPanel Orientation="Horizontal" Margin="8" HorizontalAlignment="Right">

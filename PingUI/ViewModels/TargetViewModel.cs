@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Reactive;
@@ -101,7 +102,7 @@ public sealed class TargetViewModel : ViewModelBase
 	/// <summary>
 	/// Backing store for <see cref="Tags" />.
 	/// </summary>
-	private readonly ObservableAsPropertyHelper<ImmutableSortedSet<string>> _Tags;
+	private readonly ObservableAsPropertyHelper<ImmutableSortedSet<TargetTagViewModel>> _Tags;
 
 	/// <summary>
 	/// Initializes a new <see cref="TargetViewModel" />.
@@ -120,7 +121,8 @@ public sealed class TargetViewModel : ViewModelBase
 			.Select(target => target.CoolDown)
 			.ToProperty(this, vm => vm.CoolDown);
 		_Tags = this.WhenAnyValue(vm => vm.Target)
-			.Select(target => target.Tags)
+			.CombineLatest(Locator.Current.GetRequiredService<IConfiguration>().WhenAnyValue(conf => conf.AutomaticTagEntries))
+			.Select(GetTags)
 			.ToProperty(this, vm => vm.Tags);
 		_Pinger = new SerialDisposable();
 		_History = [new PingResult(IPStatus.Unknown, DateTime.Now)];
@@ -211,6 +213,14 @@ public sealed class TargetViewModel : ViewModelBase
 			Successes = 0;
 			PingCount = 0;
 		});
+
+		static ImmutableSortedSet<TargetTagViewModel> GetTags((Target target, ImmutableArray<AutomaticTagEntry> automaticTags) pair)
+		{
+			return pair.target.Tags
+				.Select(tag => new TargetTagViewModel(new TargetTag(tag, false)))
+				.Concat(pair.automaticTags.Where(tag => tag.Matches(pair.target)).Select(tag => new TargetTagViewModel(new TargetTag(tag.Tag, true))))
+				.ToImmutableSortedSet();
+		}
 	}
 
 	/// <summary>
@@ -315,7 +325,7 @@ public sealed class TargetViewModel : ViewModelBase
 	/// <summary>
 	/// Gets the tag collection of <see cref="Target" />.
 	/// </summary>
-	public ImmutableSortedSet<string> Tags
+	public ImmutableSortedSet<TargetTagViewModel> Tags
 	{
 		get => _Tags.Value;
 	}
