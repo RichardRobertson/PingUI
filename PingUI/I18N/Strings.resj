@@ -15,6 +15,11 @@
 		"EditTargetView_AddressParseError": "Invalid IP address or hostname",
 		"EditTargetView_AddressSelectIP": "Select an IP address",
 		"EditTargetView_AddressChecking": "Checking...",
+		// AutomaticTagEntryView
+		"AutomaticTagEntryView_Source": "Source",
+		"AutomaticTagEntryView_Type": "Type",
+		"AutomaticTagEntryView_Content": "Content",
+		"AutomaticTagEntryView_Tag": "Tag",
 		// Shared DeleteTargetView and EditTargetView field labels
 		"Shared_Label_Address": "Address: ",
 		"Shared_Label_Label": "Label: ",

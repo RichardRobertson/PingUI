@@ -20,7 +20,8 @@
 					<Setter Property="(Grid.Column)" Value="1" />
 				</Style>
 			</Grid.Styles>
-			<Label Content="Source" Target="SourceCombo" />
+			<Label Content="{x:Static i18n:Strings.AutomaticTagEntryView_Source}"
+				Target="SourceCombo" />
 			<ComboBox x:Name="SourceCombo" Grid.Column="1"
 				ItemsSource="{markup:EnumValuesToList x:TypeArguments=models:AutomaticTagSource}"
 				SelectedItem="{Binding Source}">
@@ -31,7 +32,8 @@
 					</DataTemplate>
 				</ComboBox.ItemTemplate>
 			</ComboBox>
-			<Label Content="Type" Target="TypeCombo" Grid.Row="1" />
+			<Label Content="{x:Static i18n:Strings.AutomaticTagEntryView_Type}" Target="TypeCombo"
+				Grid.Row="1" />
 			<ComboBox x:Name="TypeCombo" Grid.Row="1" Grid.Column="1"
 				ItemsSource="{markup:EnumValuesToList x:TypeArguments=models:AutomaticTagType}"
 				SelectedItem="{Binding Type}">
@@ -42,9 +44,11 @@
 					</DataTemplate>
 				</ComboBox.ItemTemplate>
 			</ComboBox>
-			<Label Content="Content" Target="ContentText" Grid.Row="2" />
+			<Label Content="{x:Static i18n:Strings.AutomaticTagEntryView_Content}"
+				Target="ContentText" Grid.Row="2" />
 			<TextBox x:Name="ContentText" Text="{Binding Content}" Grid.Row="2" />
-			<Label Content="Tag" Target="TagText" Grid.Row="3" />
+			<Label Content="{x:Static i18n:Strings.AutomaticTagEntryView_Tag}" Target="TagText"
+				Grid.Row="3" />
 			<TextBox x:Name="TagText" Text="{Binding Tag}" Grid.Row="3" />
 		</Grid>
 	</Border>
