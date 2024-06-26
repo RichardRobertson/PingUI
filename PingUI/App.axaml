@@ -3,6 +3,7 @@
 	x:Class="PingUI.App"
 	xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
 	xmlns:local="using:PingUI"
+	xmlns:converters="using:PingUI.Converters"
 	RequestedThemeVariant="Dark">
 	<Application.DataTemplates>
 		<local:ViewLocator />
@@ -15,4 +16,7 @@
 		</Style>
 		<StyleInclude Source="avares://PingUI/Themes/Generic.axaml" />
 	</Application.Styles>
+	<Application.Resources>
+		<converters:EnumLocalizerConverter x:Key="EnumLocalizerConverter" />
+	</Application.Resources>
 </Application>

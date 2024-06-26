@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vm="using:PingUI.ViewModels"
+	xmlns:i18n="using:PingUI.I18N"
+	xmlns:ic="using:FluentIcons.Avalonia.Fluent"
+	x:Class="PingUI.Views.EditAutomaticTagsDialogView"
+	x:DataType="vm:EditAutomaticTagsDialogViewModel">
+	<Grid RowDefinitions="* Auto">
+		<ScrollViewer>
+			<ItemsControl ItemsSource="{Binding AutomaticTagEntries}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<DockPanel Margin="8">
+							<Button DockPanel.Dock="Right" Background="DarkRed" Margin="4 0 0 0"
+								VerticalAlignment="Top" CommandParameter="{Binding}"
+								Command="{Binding $parent[ItemsControl].((vm:EditAutomaticTagsDialogViewModel)DataContext).DeleteEntryCommand}">
+								<ic:SymbolIcon Symbol="Delete" HorizontalAlignment="Center"
+									VerticalAlignment="Center" />
+							</Button>
+							<ContentPresenter Content="{Binding}" />
+						</DockPanel>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
+		<DockPanel Margin="8" Grid.Row="1">
+			<Button Content="{x:Static i18n:Strings.Dialog_Apply}" Background="DarkGreen"
+				DockPanel.Dock="Right" Command="{Binding AcceptDialogCommand}" IsDefault="True" />
+			<Button Content="{x:Static i18n:Strings.Dialog_Cancel}" DockPanel.Dock="Right"
+				Command="{Binding CancelDialogCommand}" IsCancel="True" Margin="0 0 4 0" />
+			<Button Content="{x:Static i18n:Strings.Dialog_Create}" DockPanel.Dock="Left"
+				Command="{Binding AddEntryCommand}" />
+		</DockPanel>
+	</Grid>
+</UserControl>

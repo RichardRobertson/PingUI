@@ -148,6 +148,10 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 		{
 			DialogHost.Show(new SettingsViewModel());
 		});
+		ShowEditAutomaticTagsCommand = ReactiveCommand.Create(() =>
+		{
+			DialogHost.Show(new EditAutomaticTagsDialogViewModel());
+		});
 		StartPingingAllCommand = ReactiveCommand.Create(() =>
 		{
 			if (_Targets is { } targets)
@@ -295,6 +299,14 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 	/// A command to show the settings dialog.
 	/// </summary>
 	public ReactiveCommand<Unit, Unit> ShowSettingsCommand
+	{
+		get;
+	}
+
+	/// <summary>
+	/// A command to show the automatic tags editor dialog.
+	/// </summary>
+	public ReactiveCommand<Unit, Unit> ShowEditAutomaticTagsCommand
 	{
 		get;
 	}

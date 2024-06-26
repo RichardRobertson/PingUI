@@ -106,6 +106,17 @@
 										Text="{x:Static i18n:Strings.MainWindow_Menu_Settings}" />
 								</Grid>
 							</Button>
+							<Button Command="{Binding ShowEditAutomaticTagsCommand}">
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="Auto" SharedSizeGroup="Icon" />
+										<ColumnDefinition />
+									</Grid.ColumnDefinitions>
+									<ic:SymbolIcon Symbol="ArrowSyncCircle" />
+									<TextBlock
+										Text="{x:Static i18n:Strings.MainWindow_Menu_AutomaticTags}" />
+								</Grid>
+							</Button>
 							<Separator />
 							<Button Command="{Binding StartPingingAllCommand}">
 								<Grid>

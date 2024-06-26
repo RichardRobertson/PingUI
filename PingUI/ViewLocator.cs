@@ -25,6 +25,8 @@ public class ViewLocator : IDataTemplate
 			SettingsViewModel => new SettingsView(),
 			DeleteAllTargetsViewModel => new DeleteAllTargetsView(),
 			TargetTagViewModel => new TargetTagView(),
+			EditAutomaticTagsDialogViewModel => new EditAutomaticTagsDialogView(),
+			AutomaticTagEntryViewModel => new AutomaticTagEntryView(),
 			_ => new TextBlock() { Text = "Not Found: " + data.GetType().FullName },
 		};
 	}

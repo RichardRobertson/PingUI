@@ -1,0 +1,51 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vm="using:PingUI.ViewModels"
+	xmlns:i18n="using:PingUI.I18N"
+	xmlns:models="using:PingUI.Models"
+	xmlns:markup="using:PingUI.Markup"
+	xmlns:converters="using:PingUI.Converters"
+	xmlns:ic="using:FluentIcons.Avalonia.Fluent"
+	x:Class="PingUI.Views.AutomaticTagEntryView"
+	x:DataType="vm:AutomaticTagEntryViewModel">
+	<Border Background="#ff333333" BorderBrush="#33ffffff" BorderThickness="1" CornerRadius="8">
+		<Grid ColumnDefinitions="Auto *" RowDefinitions="Auto Auto Auto Auto" Margin="8">
+			<Grid.Styles>
+				<Style Selector="Label">
+					<Setter Property="HorizontalAlignment" Value="Right" />
+					<Setter Property="VerticalAlignment" Value="Center" />
+				</Style>
+				<Style Selector="TextBox, ComboBox">
+					<Setter Property="MinWidth" Value="100" />
+					<Setter Property="(Grid.Column)" Value="1" />
+				</Style>
+			</Grid.Styles>
+			<Label Content="Source" Target="SourceCombo" />
+			<ComboBox x:Name="SourceCombo" Grid.Column="1"
+				ItemsSource="{markup:EnumValuesToList x:TypeArguments=models:AutomaticTagSource}"
+				SelectedItem="{Binding Source}">
+				<ComboBox.ItemTemplate>
+					<DataTemplate DataType="models:AutomaticTagSource">
+						<TextBlock
+							Text="{Binding Converter={StaticResource EnumLocalizerConverter}}" />
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+			<Label Content="Type" Target="TypeCombo" Grid.Row="1" />
+			<ComboBox x:Name="TypeCombo" Grid.Row="1" Grid.Column="1"
+				ItemsSource="{markup:EnumValuesToList x:TypeArguments=models:AutomaticTagType}"
+				SelectedItem="{Binding Type}">
+				<ComboBox.ItemTemplate>
+					<DataTemplate DataType="models:AutomaticTagType">
+						<TextBlock
+							Text="{Binding Converter={StaticResource EnumLocalizerConverter}}" />
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+			<Label Content="Content" Target="ContentText" Grid.Row="2" />
+			<TextBox x:Name="ContentText" Text="{Binding Content}" Grid.Row="2" />
+			<Label Content="Tag" Target="TagText" Grid.Row="3" />
+			<TextBox x:Name="TagText" Text="{Binding Tag}" Grid.Row="3" />
+		</Grid>
+	</Border>
+</UserControl>

@@ -67,6 +67,7 @@
 		"MainWindow_Menu_PlayAllFiltered": "Start pinging all that match filter",
 		"MainWindow_Menu_PauseAllFiltered": "Stop pinging all that match filter",
 		"MainWindow_Menu_Settings": "Settings",
+		"MainWindow_Menu_AutomaticTags": "Edit automatic tags",
 		"MainWindow_Menu_DeleteAll": "Delete all targets",
 		"MainWindow_Menu_DetailsView": "Details view",
 		"MainWindow_Menu_CondensedView": "Condensed view",
@@ -120,6 +121,20 @@
 		"System_Net_NetworkInformation_IPStatus_UnrecognizedNextHeader": "Unrecognized Next Header",
 		"System_Net_NetworkInformation_IPStatus_IcmpError": "Icmp Error",
 		"System_Net_NetworkInformation_IPStatus_DestinationScopeMismatch": "Destination Scope Mismatch",
-		"System_Net_NetworkInformation_IPStatus_Unknown": "Unknown"
+		"System_Net_NetworkInformation_IPStatus_Unknown": "Unknown",
+		// PingUI.Models.AutomaticTagSource enum
+		"PingUI_Models_AutomaticTagSource_Label": "Label",
+		"PingUI_Models_AutomaticTagSource_Address": "Address",
+		// PingUI.Models.AutomaticTagType enum
+		"PingUI_Models_AutomaticTagType_Contains": "Contains",
+		"PingUI_Models_AutomaticTagType_IsExactly": "Is exactly",
+		"PingUI_Models_AutomaticTagType_StartsWith": "Starts with",
+		"PingUI_Models_AutomaticTagType_EndsWith": "Ends with",
+		"PingUI_Models_AutomaticTagType_MatchesRegex": "Matches regex",
+		"PingUI_Models_AutomaticTagType_DoesNotContain": "Does not contain",
+		"PingUI_Models_AutomaticTagType_DoesNotMatchExactly": "Does not match exactly",
+		"PingUI_Models_AutomaticTagType_DoesNotStartWith": "Does not start with",
+		"PingUI_Models_AutomaticTagType_DoesNotEndWith": "Does not end with",
+		"PingUI_Models_AutomaticTagType_DoesNotMatchRegex": "Does not match regex"
 	}
 }
