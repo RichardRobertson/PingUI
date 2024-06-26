@@ -39,7 +39,7 @@
 				<ItemsRepeater.ItemTemplate>
 					<DataTemplate>
 						<Button Content="{Binding}" CommandParameter="{Binding}" Margin="4"
-							Command="{Binding ((vm:EditTargetViewModel)DataContext).ApplyIPSuggestionCommand, RelativeSource={RelativeSource AncestorType=ItemsRepeater}}" />
+							Command="{Binding $parent[ItemsRepeater].((vm:EditTargetViewModel)DataContext).ApplyIPSuggestionCommand}" />
 					</DataTemplate>
 				</ItemsRepeater.ItemTemplate>
 			</ItemsRepeater>
