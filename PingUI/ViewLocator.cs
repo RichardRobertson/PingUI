@@ -27,6 +27,10 @@ public class ViewLocator : IDataTemplate
 			TargetTagViewModel => new TargetTagView(),
 			EditAutomaticTagsDialogViewModel => new EditAutomaticTagsDialogView(),
 			AutomaticTagEntryViewModel => new AutomaticTagEntryView(),
+			FilterBuilderViewModel => new FilterBuilderView(),
+			FilterTextViewModel => new FilterTextView(),
+			FilterCombinedViewModel => new FilterCombinedView(),
+			FilterNotViewModel => new FilterNotView(),
 			_ => new TextBlock() { Text = "Not Found: " + data.GetType().FullName },
 		};
 	}

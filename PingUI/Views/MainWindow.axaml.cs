@@ -74,12 +74,4 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 	{
 		Close();
 	}
-
-	private async void OnFilterFlyoutClosedAsync(object? sender, EventArgs e)
-	{
-		if (ViewModel?.RefreshFilterTextCommand is { } command && await command.CanExecute.FirstAsync())
-		{
-			await command.Execute();
-		}
-	}
 }

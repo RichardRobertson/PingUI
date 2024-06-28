@@ -1,0 +1,19 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vm="using:PingUI.ViewModels"
+	xmlns:markup="using:PingUI.Markup"
+	xmlns:models="using:PingUI.Models"
+	x:Class="PingUI.Views.FilterTextView"
+	x:DataType="vm:FilterTextViewModel">
+	<Grid ColumnDefinitions="Auto *">
+		<ComboBox ItemsSource="{markup:EnumValuesToList x:TypeArguments=models:MatchType}"
+			SelectedItem="{Binding Type}">
+			<ComboBox.ItemTemplate>
+				<DataTemplate DataType="models:MatchType">
+					<TextBlock Text="{Binding Converter={StaticResource EnumLocalizerConverter}}" />
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
+		<TextBox Text="{Binding Content}" Grid.Column="1" MinWidth="100" />
+	</Grid>
+</UserControl>

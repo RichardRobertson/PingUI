@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vm="using:PingUI.ViewModels"
+	xmlns:ic="using:FluentIcons.Avalonia.Fluent"
+	x:Class="PingUI.Views.FilterCombinedView"
+	x:DataType="vm:FilterCombinedViewModel">
+	<Border BorderBrush="#33ffffff" BorderThickness="1 0 0 0" Padding="8 0 0 0">
+		<StackPanel>
+			<ItemsControl ItemsSource="{Binding Children}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<DockPanel Margin="8">
+							<Button DockPanel.Dock="Right" Background="DarkRed" Margin="4 0 0 0"
+								VerticalAlignment="Top" CommandParameter="{Binding}"
+								Command="{Binding $parent[ItemsControl].((vm:FilterCombinedViewModel)DataContext).RemoveChildCommand}">
+								<ic:SymbolIcon Symbol="Delete" HorizontalAlignment="Center"
+									VerticalAlignment="Center" />
+							</Button>
+							<ContentPresenter Content="{Binding}" />
+						</DockPanel>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+			<Button Background="DarkGreen" Command="{Binding AddChildCommand}">
+				<ic:SymbolIcon Symbol="Add" HorizontalAlignment="Center" VerticalAlignment="Center" />
+			</Button>
+		</StackPanel>
+	</Border>
+</UserControl>

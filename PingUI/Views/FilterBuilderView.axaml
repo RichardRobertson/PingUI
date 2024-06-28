@@ -1,0 +1,20 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vm="using:PingUI.ViewModels"
+	xmlns:markup="using:PingUI.Markup"
+	xmlns:models="using:PingUI.Models"
+	x:Class="PingUI.Views.FilterBuilderView"
+	x:DataType="vm:FilterBuilderViewModel">
+	<Grid ColumnDefinitions="Auto *" RowDefinitions="Auto *">
+		<ComboBox ItemsSource="{markup:EnumValuesToList x:TypeArguments=models:FilterSource}"
+			SelectedItem="{Binding Source}">
+			<ComboBox.ItemTemplate>
+				<DataTemplate DataType="models:FilterSource">
+					<TextBlock Text="{Binding Converter={StaticResource EnumLocalizerConverter}}" />
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
+		<ContentControl Content="{Binding SideContent}" Grid.Column="1" Grid.RowSpan="2" />
+		<ContentControl Content="{Binding BottomContent}" Grid.Row="1" Grid.ColumnSpan="2" />
+	</Grid>
+</UserControl>

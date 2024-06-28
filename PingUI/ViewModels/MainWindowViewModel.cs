@@ -13,13 +13,11 @@ using System.Threading.Tasks;
 using DialogHostAvalonia;
 using DynamicData;
 using DynamicData.Binding;
-using DynamicData.Kernel;
 using PingUI.Collections;
 using PingUI.Extensions;
 using PingUI.I18N;
 using PingUI.Models;
 using PingUI.ServiceModels;
-using PingUI.Tags;
 using ReactiveUI;
 using Splat;
 
@@ -39,6 +37,8 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 	/// Reference to the current application configuration.
 	/// </summary>
 	private readonly IConfiguration configuration;
+
+	private readonly ObservableAsPropertyHelper<bool> _IsFiltered;
 
 	/// <summary>
 	/// Backing store for <see cref="Targets" />.
@@ -60,20 +60,14 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 	/// </summary>
 	private bool _IsCondensedView;
 
-	private string? _TagFilterText;
-
-	private FilterBase? _TagFilter;
-
-	private string? _FilterTagsError;
-
-	private bool _IsFiltered;
-
 	/// <summary>
 	/// Initializes a new <see cref="MainWindowViewModel" />.
 	/// </summary>
 	public MainWindowViewModel()
 	{
 		configuration = Locator.Current.GetRequiredService<IConfiguration>();
+		FilterBuilder = new FilterBuilderViewModel();
+		_IsFiltered = FilterBuilder.AnyChange.Select(_ => FilterBuilder.Source != FilterSource.Unfiltered).ToProperty(this, vm => vm.IsFiltered);
 		this.WhenActivated(disposables =>
 		{
 			Targets = new ReadOnlyObservableFilteredCollection<ReadOnlyObservableMappedCollection<Target, ObservableCollection<Target>, TargetViewModel>, TargetViewModel>(
@@ -82,7 +76,7 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 					t => new TargetViewModel(t),
 					(t, tvm) => tvm.Target = t,
 					tvm => tvm.Target),
-				this.WhenAnyValue(vm => vm.IsFiltered).Select(GetFilter));
+				FilterBuilder.AnyChange.Select<Unit, Func<TargetViewModel, bool>>(_ => FilterBuilder.Matches));
 			Targets.DisposeWith(disposables);
 			Disposable.Create(() => Targets = null).DisposeWith(disposables);
 			Observable.FromAsync(CheckForUpdatesAsync).Subscribe().DisposeWith(disposables);
@@ -179,7 +173,7 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 				{
 					foreach (var target in targets)
 					{
-						if (_TagFilter!.IsMatch(target.Tags.Select(tag => tag.Text)))
+						if (FilterBuilder.Matches(target))
 						{
 							target.IsEnabled = true;
 						}
@@ -194,7 +188,7 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 				{
 					foreach (var target in targets)
 					{
-						if (_TagFilter!.IsMatch(target.Tags.Select(tag => tag.Text)))
+						if (FilterBuilder.Matches(target))
 						{
 							target.IsEnabled = false;
 						}
@@ -205,41 +199,6 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 		_ViewStyle = MainViewStyle.Details;
 		SetDetailsViewCommand = ReactiveCommand.Create(() => { ViewStyle = MainViewStyle.Details; }, this.WhenValueChanged(vm => vm.IsDetailsView).Select(isDetailsView => !isDetailsView));
 		SetCondensedViewCommand = ReactiveCommand.Create(() => { ViewStyle = MainViewStyle.Condensed; }, this.WhenValueChanged(vm => vm.IsCondensedView).Select(isCondensedView => !isCondensedView));
-		FilterTagsCommand = ReactiveCommand.Create(() =>
-		{
-			_TagFilter = null;
-			FilterTagsError = null;
-			IsFiltered = false;
-			if (string.IsNullOrWhiteSpace(TagFilterText))
-			{
-				return;
-			}
-			try
-			{
-				_TagFilter = FilterBase.Parse(TagFilterText, null);
-				TagFilterText = _TagFilter.ToString();
-				IsFiltered = true;
-			}
-			catch (Exception ex)
-			{
-				FilterTagsError = ex.Message;
-			}
-		});
-		ClearFilterCommand = ReactiveCommand.Create(() =>
-		{
-			_TagFilter = null;
-			FilterTagsError = null;
-			TagFilterText = null;
-			IsFiltered = false;
-		});
-		RefreshFilterTextCommand = ReactiveCommand.Create(() => { TagFilterText = _TagFilter?.ToString(); });
-	}
-
-	private Func<TargetViewModel, bool> GetFilter(bool shouldFilter)
-	{
-		return shouldFilter && _TagFilter is not null
-			? targetViewModel => _TagFilter.IsMatch(targetViewModel.Tags.Select(tag => tag.Text))
-			: _ => true;
 	}
 
 	/// <summary>
@@ -411,38 +370,12 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 		private set => this.RaiseAndSetIfChanged(ref _IsCondensedView, value);
 	}
 
-	public string? TagFilterText
-	{
-		get => _TagFilterText;
-		set => this.RaiseAndSetIfChanged(ref _TagFilterText, value);
-	}
-
-	public ReactiveCommand<Unit, Unit> FilterTagsCommand
+	public FilterBuilderViewModel FilterBuilder
 	{
 		get;
 	}
 
-	public ReactiveCommand<Unit, Unit> ClearFilterCommand
-	{
-		get;
-	}
-
-	public ReactiveCommand<Unit, Unit> RefreshFilterTextCommand
-	{
-		get;
-	}
-
-	public string? FilterTagsError
-	{
-		get => _FilterTagsError;
-		set => this.RaiseAndSetIfChanged(ref _FilterTagsError, value);
-	}
-
-	public bool IsFiltered
-	{
-		get => _IsFiltered;
-		set => this.RaiseAndSetIfChanged(ref _IsFiltered, value);
-	}
+	public bool IsFiltered => _IsFiltered.Value;
 
 	/// <inheritdoc />
 	public ViewModelActivator Activator

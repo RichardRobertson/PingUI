@@ -140,6 +140,15 @@
 		"PingUI_Models_MatchType_DoesNotMatchExactly": "Does not match exactly",
 		"PingUI_Models_MatchType_DoesNotStartWith": "Does not start with",
 		"PingUI_Models_MatchType_DoesNotEndWith": "Does not end with",
-		"PingUI_Models_MatchType_DoesNotMatchRegex": "Does not match regex"
+		"PingUI_Models_MatchType_DoesNotMatchRegex": "Does not match regex",
+		// PingUI.Models.FilterSource enum
+		"PingUI_Models_FilterSource_Unfiltered": "Unfiltered",
+		"PingUI_Models_FilterSource_Label": "Label",
+		"PingUI_Models_FilterSource_Address": "Address",
+		"PingUI_Models_FilterSource_AnyTag": "Any tag",
+		"PingUI_Models_FilterSource_AllTags": "All tags",
+		"PingUI_Models_FilterSource_And": "And",
+		"PingUI_Models_FilterSource_Or": "Or",
+		"PingUI_Models_FilterSource_Not": "Not"
 	}
 }

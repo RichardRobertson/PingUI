@@ -1,0 +1,9 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vm="using:PingUI.ViewModels"
+	xmlns:markup="using:PingUI.Markup"
+	xmlns:models="using:PingUI.Models"
+	x:Class="PingUI.Views.FilterNotView"
+	x:DataType="vm:FilterNotViewModel">
+	<ContentControl Content="{Binding Child}" />
+</UserControl>
