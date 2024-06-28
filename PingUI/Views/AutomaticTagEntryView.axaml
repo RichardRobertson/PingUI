@@ -35,10 +35,10 @@
 			<Label Content="{x:Static i18n:Strings.AutomaticTagEntryView_Type}" Target="TypeCombo"
 				Grid.Row="1" />
 			<ComboBox x:Name="TypeCombo" Grid.Row="1" Grid.Column="1"
-				ItemsSource="{markup:EnumValuesToList x:TypeArguments=models:AutomaticTagType}"
+				ItemsSource="{markup:EnumValuesToList x:TypeArguments=models:MatchType}"
 				SelectedItem="{Binding Type}">
 				<ComboBox.ItemTemplate>
-					<DataTemplate DataType="models:AutomaticTagType">
+					<DataTemplate DataType="models:MatchType">
 						<TextBlock
 							Text="{Binding Converter={StaticResource EnumLocalizerConverter}}" />
 					</DataTemplate>

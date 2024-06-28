@@ -10,7 +10,7 @@ public record AutomaticTagEntry
 {
 	private readonly Regex? regex;
 
-	public AutomaticTagEntry(AutomaticTagSource source, AutomaticTagType type, string content, string tag)
+	public AutomaticTagEntry(AutomaticTagSource source, MatchType type, string content, string tag)
 	{
 		if (!new[]
 			{
@@ -23,27 +23,27 @@ public record AutomaticTagEntry
 		}
 		if (!new[]
 			{
-				AutomaticTagType.Contains,
-				AutomaticTagType.IsExactly,
-				AutomaticTagType.StartsWith,
-				AutomaticTagType.EndsWith,
-				AutomaticTagType.MatchesRegex,
-				AutomaticTagType.DoesNotContain,
-				AutomaticTagType.DoesNotMatchExactly,
-				AutomaticTagType.DoesNotStartWith,
-				AutomaticTagType.DoesNotEndWith,
-				AutomaticTagType.DoesNotMatchRegex,
+				MatchType.Contains,
+				MatchType.IsExactly,
+				MatchType.StartsWith,
+				MatchType.EndsWith,
+				MatchType.MatchesRegex,
+				MatchType.DoesNotContain,
+				MatchType.DoesNotMatchExactly,
+				MatchType.DoesNotStartWith,
+				MatchType.DoesNotEndWith,
+				MatchType.DoesNotMatchRegex,
 			}
 			.Contains(type))
 		{
-			throw new InvalidEnumArgumentException(nameof(type), (int)type, typeof(AutomaticTagType));
+			throw new InvalidEnumArgumentException(nameof(type), (int)type, typeof(MatchType));
 		}
 		ArgumentException.ThrowIfNullOrWhiteSpace(content);
 		ArgumentException.ThrowIfNullOrWhiteSpace(tag);
 		if (new[]
 			{
-				AutomaticTagType.MatchesRegex,
-				AutomaticTagType.DoesNotMatchRegex,
+				MatchType.MatchesRegex,
+				MatchType.DoesNotMatchRegex,
 			}
 			.Contains(type))
 		{
@@ -60,7 +60,7 @@ public record AutomaticTagEntry
 		get;
 	}
 
-	public AutomaticTagType Type
+	public MatchType Type
 	{
 		get;
 	}
@@ -85,16 +85,16 @@ public record AutomaticTagEntry
 		};
 		return Type switch
 		{
-			AutomaticTagType.Contains => source.Contains(Content),
-			AutomaticTagType.IsExactly => source.Equals(Content),
-			AutomaticTagType.StartsWith => source.StartsWith(Content),
-			AutomaticTagType.EndsWith => source.EndsWith(Content),
-			AutomaticTagType.MatchesRegex => regex!.IsMatch(source),
-			AutomaticTagType.DoesNotContain => !source.Contains(Content),
-			AutomaticTagType.DoesNotMatchExactly => !source.Equals(Content),
-			AutomaticTagType.DoesNotStartWith => !source.StartsWith(Content),
-			AutomaticTagType.DoesNotEndWith => !source.EndsWith(Content),
-			AutomaticTagType.DoesNotMatchRegex => !regex!.IsMatch(source),
+			MatchType.Contains => source.Contains(Content),
+			MatchType.IsExactly => source.Equals(Content),
+			MatchType.StartsWith => source.StartsWith(Content),
+			MatchType.EndsWith => source.EndsWith(Content),
+			MatchType.MatchesRegex => regex!.IsMatch(source),
+			MatchType.DoesNotContain => !source.Contains(Content),
+			MatchType.DoesNotMatchExactly => !source.Equals(Content),
+			MatchType.DoesNotStartWith => !source.StartsWith(Content),
+			MatchType.DoesNotEndWith => !source.EndsWith(Content),
+			MatchType.DoesNotMatchRegex => !regex!.IsMatch(source),
 			_ => throw new UnreachableException(),
 		};
 	}

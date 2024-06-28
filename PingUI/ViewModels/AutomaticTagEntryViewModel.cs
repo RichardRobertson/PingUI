@@ -11,7 +11,7 @@ public class AutomaticTagEntryViewModel : ViewModelBase
 {
 	private AutomaticTagSource _Source;
 
-	private AutomaticTagType _Type;
+	private MatchType _Type;
 
 	private string? _Content;
 
@@ -25,9 +25,9 @@ public class AutomaticTagEntryViewModel : ViewModelBase
 			vm => vm.Content,
 			this.WhenAnyValue(vm => vm.Type, vm => vm.Content)
 				.Throttle(TimeSpan.FromMilliseconds(500))
-				.Select(((AutomaticTagType type, string? content) pair) =>
+				.Select(((MatchType type, string? content) pair) =>
 				{
-					if (pair.type == AutomaticTagType.MatchesRegex || pair.type == AutomaticTagType.DoesNotMatchRegex)
+					if (pair.type == MatchType.MatchesRegex || pair.type == MatchType.DoesNotMatchRegex)
 					{
 						try
 						{
@@ -49,7 +49,7 @@ public class AutomaticTagEntryViewModel : ViewModelBase
 		set => this.RaiseAndSetIfChanged(ref _Source, value);
 	}
 
-	public AutomaticTagType Type
+	public MatchType Type
 	{
 		get => _Type;
 		set => this.RaiseAndSetIfChanged(ref _Type, value);

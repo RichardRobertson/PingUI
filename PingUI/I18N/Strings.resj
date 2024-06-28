@@ -130,16 +130,16 @@
 		// PingUI.Models.AutomaticTagSource enum
 		"PingUI_Models_AutomaticTagSource_Label": "Label",
 		"PingUI_Models_AutomaticTagSource_Address": "Address",
-		// PingUI.Models.AutomaticTagType enum
-		"PingUI_Models_AutomaticTagType_Contains": "Contains",
-		"PingUI_Models_AutomaticTagType_IsExactly": "Is exactly",
-		"PingUI_Models_AutomaticTagType_StartsWith": "Starts with",
-		"PingUI_Models_AutomaticTagType_EndsWith": "Ends with",
-		"PingUI_Models_AutomaticTagType_MatchesRegex": "Matches regex",
-		"PingUI_Models_AutomaticTagType_DoesNotContain": "Does not contain",
-		"PingUI_Models_AutomaticTagType_DoesNotMatchExactly": "Does not match exactly",
-		"PingUI_Models_AutomaticTagType_DoesNotStartWith": "Does not start with",
-		"PingUI_Models_AutomaticTagType_DoesNotEndWith": "Does not end with",
-		"PingUI_Models_AutomaticTagType_DoesNotMatchRegex": "Does not match regex"
+		// PingUI.Models.MatchType enum
+		"PingUI_Models_MatchType_Contains": "Contains",
+		"PingUI_Models_MatchType_IsExactly": "Is exactly",
+		"PingUI_Models_MatchType_StartsWith": "Starts with",
+		"PingUI_Models_MatchType_EndsWith": "Ends with",
+		"PingUI_Models_MatchType_MatchesRegex": "Matches regex",
+		"PingUI_Models_MatchType_DoesNotContain": "Does not contain",
+		"PingUI_Models_MatchType_DoesNotMatchExactly": "Does not match exactly",
+		"PingUI_Models_MatchType_DoesNotStartWith": "Does not start with",
+		"PingUI_Models_MatchType_DoesNotEndWith": "Does not end with",
+		"PingUI_Models_MatchType_DoesNotMatchRegex": "Does not match regex"
 	}
 }

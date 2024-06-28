@@ -1,6 +1,6 @@
 namespace PingUI.Models;
 
-public enum AutomaticTagType
+public enum MatchType
 {
 	Contains,
 	IsExactly,
