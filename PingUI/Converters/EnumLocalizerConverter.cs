@@ -61,6 +61,7 @@ public class EnumLocalizerConverter : IValueConverter
 			IPStatus.IcmpError => Strings.System_Net_NetworkInformation_IPStatus_IcmpError,
 			IPStatus.DestinationScopeMismatch => Strings.System_Net_NetworkInformation_IPStatus_DestinationScopeMismatch,
 			IPStatus.Unknown => Strings.System_Net_NetworkInformation_IPStatus_Unknown,
+			null => string.Empty,
 			_ => throw new InvalidEnumArgumentException("Value provided could not be localized."),
 		};
 	}
