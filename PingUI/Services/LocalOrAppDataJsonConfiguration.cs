@@ -47,7 +47,7 @@ public class LocalOrAppDataJsonConfiguration : IConfiguration
 
 	private WindowPlacement.WindowPlacementRecord? _WindowBounds;
 
-	private ImmutableArray<AutomaticTagEntry> _AutomaticTagEntries;
+	private ImmutableArray<AutomaticTagEntry> _AutomaticTagEntries = ImmutableArray<AutomaticTagEntry>.Empty;
 
 	/// <inheritdoc />
 	public ObservableCollection<Target> Targets
